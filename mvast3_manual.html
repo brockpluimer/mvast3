@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-VAST 3 Application Manual</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .version-info {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 4px solid #95a5a6;
+        }
+        
+        .version-info p {
+            margin: 5px 0;
+            font-weight: 500;
+        }
+        
+        ol, ul {
+            margin-bottom: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        ul ul {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e74c3c;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .installation-section {
+            background-color: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid #17a2b8;
+        }
+        
+        .installation-section h2 {
+            color: #0c5460;
+            margin-top: 0;
+            border-left: none;
+            padding-left: 0;
+        }
+        
+        .installation-section h3 {
+            color: #155724;
+            margin-top: 20px;
+        }
+        
+        .code-block {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: 'Courier New', 'Monaco', monospace;
+            font-size: 14px;
+            border: 1px solid #4a5568;
+            overflow-x: auto;
+        }
+        
+        .code-block code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            font-size: inherit;
+        }
+        
+        .workflow-stage {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .stage-title {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .data-section {
+            background-color: #f1f3f4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .filename {
+            font-family: 'Courier New', monospace;
+            background-color: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        strong {
+            color: #2c3e50;
+        }
+        
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #3498db, transparent);
+            margin: 40px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>M-VAST 3 Application Manual</h1>
+        
+        <div class="version-info">
+            <p><strong>Version:</strong> 1.0_2025_06_18</p>
+            <p><strong>Authors:</strong> Brock Pluimer (University of California, Irvine) &amp; Steven Harte (University of Michigan)</p>
+        </div>
+
+        <div class="installation-section">
+            <h2>Installation & Setup</h2>
+            <p>In order to run this application, you need <strong>Python 3</strong> installed on your system.</p>
+            
+            <h3>Required Packages</h3>
+            <p>Install the required packages by running the following command in your terminal:</p>
+            <div class="code-block">
+                <code>pip install pygame pillow numpy ttkbootstrap</code>
+            </div>
+            
+            <h3>Running the Application</h3>
+            <p>Once the packages are installed, run the application with:</p>
+            <div class="code-block">
+                <code>python mvast3.py</code>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>1. Overview</h2>
+        
+        <p>The <strong>Michigan Visual Aversion Stress Test (M-VAST 3)</strong> is a software platform designed for conducting quantitative sensory testing (QST) using visual stimuli. It allows researchers to:</p>
+        
+        <ol>
+            <li><strong>Generate</strong> standardized and randomized experiment protocols.</li>
+            <li><strong>Run</strong> experiments with participants in a controlled, full-screen environment.</li>
+            <li><strong>Collect and Log</strong> participant ratings for discomfort and brightness in a structured CSV format.</li>
+        </ol>
+        
+        <p>This manual will guide you through the complete workflow, from setting up an experiment to understanding the data you collect.</p>
+
+        <hr>
+
+        <h2>2. The Workflow</h2>
+        
+        <p>Using the M-VAST 3 application involves two main stages: first generating the experiment files, and then running the experiment with a participant.</p>
+
+        <div class="workflow-stage">
+            <h3 class="stage-title">Stage 1: Generate Experiment Setup</h3>
+            
+            <p>This is the first step. Here, you define the parameters for your study and create the necessary files.</p>
+            
+            <ol>
+                <li>Launch the M-VAST 3 application. From the main menu, click <strong>"Generate Experiment Setup"</strong>.</li>
+                <li>Fill in the following fields in the "Generate Experiment Setup" window:
+                    <ul>
+                        <li><strong>Experiment ID:</strong> A unique identifier for your study or condition (e.g., <code>Study1_HighAnxietyGroup</code>). This ID determines the randomization and naming of your setup files. <strong>Do not use special characters</strong> like <code>/\:*?"&lt;&gt;|</code>.</li>
+                        <li><strong>Base Output Directory:</strong> The main folder where all experiment-related files (setups, schedules, and later, participant data) will be stored. It defaults to an <code>experiment_data</code> folder next to the application. It is recommended to keep this default.</li>
+                        <li><strong>Parameter Mode:</strong>
+                            <ul>
+                                <li><strong>Default Parameters:</strong> Uses a standard, pre-defined set of parameters for trial timing and stimulus frequency. This is recommended for ensuring consistency across studies.</li>
+                                <li><strong>Custom Parameters:</strong> Allows you to manually set the <code>Stimulus Duration</code>, <code>Fixation Duration</code>, <code>Checkerboard Frequency</code>, and the <code>Number of Randomized Blocks</code>.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>Click the <strong>"Generate Experiment Files"</strong> button.</li>
+            </ol>
+            
+            <p>This action creates two important files inside your "Base Output Directory":</p>
+            <ul>
+                <li><span class="filename">..._brightness_schedule.csv</span>: A CSV file containing the randomized sequence of brightness levels for the main trials. If you re-use an Experiment ID, the software will load the same schedule to ensure reproducibility.</li>
+                <li><span class="filename">..._master_trials.csv</span>: The master plan for the entire experiment. This CSV lists every single trial in order, detailing its parameters (brightness, duration, block number, etc.). <strong>This is the file you will load in the next stage.</strong></li>
+            </ul>
+        </div>
+
+        <div class="workflow-stage">
+            <h3 class="stage-title">Stage 2: Run Experiment</h3>
+            
+            <p>Once your setup files are generated, you are ready to run the experiment with a participant.</p>
+            
+            <ol>
+                <li>From the main menu, click <strong>"Run Experiment"</strong>.</li>
+                <li>Fill in the following fields in the "Run Experiment" window:
+                    <ul>
+                        <li><strong>Master Trial CSV:</strong> Click "Browse..." and select the <span class="filename">..._master_trials.csv</span> file you created in Stage 1.</li>
+                        <li><strong>Participant ID:</strong> Enter a unique identifier for the participant (e.g., <code>P001</code>, <code>Subj_12</code>). <strong>Do not use special characters.</strong></li>
+                        <li><strong>Stimulus Image Files (Image 1 &amp; Image 2):</strong> Browse for the two images that will be alternated to create the flickering checkerboard stimulus.</li>
+                        <li><strong>Participant Data Log Directory:</strong> Choose the folder where this specific participant's data will be saved. It defaults to a <code>participant_runs</code> subfolder within your base directory.</li>
+                    </ul>
+                </li>
+                <li>Click the <strong>"Start Experiment"</strong> button.</li>
+            </ol>
+            
+            <p>The control panel will disappear, and the full-screen experiment will begin on the primary monitor.</p>
+        </div>
+
+        <hr>
+
+        <h2>3. The Participant's Experience</h2>
+        
+        <p>The participant interacts with a simple, full-screen interface.</p>
+        
+        <ol>
+            <li><strong>Instructions:</strong> A welcome screen with instructions appears first.</li>
+            <li><strong>Trial Sequence:</strong> The experiment proceeds through a loop for each trial:
+                <ul>
+                    <li><strong>Fixation Cross (+):</strong> The participant is instructed to focus on a cross in the center of the screen.</li>
+                    <li><strong>Stimulus Presentation:</strong> The flickering checkerboard is displayed for the duration specified in the master trial file.</li>
+                    <li><strong>Unpleasantness Rating:</strong> A slider appears. The participant uses the mouse to rate the unpleasantness of the stimulus on a scale from <strong>0 (Not Unpleasant)</strong> to <strong>100 (Most Unpleasant Image Imaginable)</strong> and clicks <strong>"Confirm"</strong>.</li>
+                    <li><strong>Brightness Rating:</strong> A second slider appears. The participant rates the perceived brightness from <strong>0 (No Image Visible)</strong> to <strong>100 (Brightest Image Imaginable)</strong> and clicks <strong>"Confirm"</strong>.</li>
+                </ul>
+            </li>
+            <li><strong>Completion:</strong> After the final trial, a "Thank You" message is displayed, and the application closes the experiment window.</li>
+        </ol>
+        
+        <div class="highlight">
+            <strong>Exiting the Experiment:</strong> The participant or researcher can press the <strong><code>ESC</code></strong> key at any time to stop the experiment. All data collected up to that point will be saved.
+        </div>
+
+        <hr>
+
+        <h2>4. Output Data Format</h2>
+        
+        <p>For each participant run, two files are generated in the specified "Participant Data Log Directory".</p>
+
+        <div class="data-section">
+            <h3>A. Detailed Trial-by-Trial Data</h3>
+            
+            <p><strong>Filename:</strong> <span class="filename">data_P[ParticipantID]_[Timestamp].csv</span></p>
+            
+            <p>This file contains a detailed log of every completed trial. It includes a header with metadata about the run, followed by the data columns:</p>
+            
+            <ul>
+                <li><strong>Header Information:</strong>
+                    <ul>
+                        <li><code>App_Version</code>: The version of the M-VAST 3 software used.</li>
+                        <li><code>Experiment_ID</code>: The ID of the experiment setup used.</li>
+                        <li><code>Participant_ID</code>: The ID of the participant.</li>
+                        <li><code>Timestamp_Start_Run</code>: The date and time the run was initiated.</li>
+                        <li><code>Master_CSV_Used</code>: The filename of the master trial list.</li>
+                        <li><code>Image1_File</code> / <code>Image2_File</code>: The filenames of the stimulus images.</li>
+                    </ul>
+                </li>
+                <li><strong>Data Columns:</strong>
+                    <ul>
+                        <li><code>Trial_Number_Overall</code>: The trial number in the overall sequence (1, 2, 3...).</li>
+                        <li><code>Block_Number</code>: The block number. Block <code>0</code> is the initial ramp-up block. Blocks <code>1</code>, <code>2</code>, etc., are the randomized blocks.</li>
+                        <li><code>Trial_In_Block</code>: The trial number within the current block.</li>
+                        <li><code>Brightness_Factor</code>: The brightness multiplier used for the stimulus (0.0 to 1.0).</li>
+                        <li><code>Stimulus_Duration_s</code>: The duration of the stimulus in seconds.</li>
+                        <li><code>Fixation_Duration_s</code>: The duration of the fixation cross in seconds.</li>
+                        <li><code>Checkerboard_Hz</code>: The flicker frequency of the stimulus.</li>
+                        <li><code>Discomfort_Rating_0_100</code>: The participant's unpleasantness rating (integer from 0-100).</li>
+                        <li><code>Brightness_Rating_0_100</code>: The participant's brightness rating (integer from 0-100).</li>
+                        <li><code>Response_Timestamp</code>: The exact time the final rating for the trial was confirmed.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="data-section">
+            <h3>B. Summary Score Data</h3>
+            
+            <p><strong>Filename:</strong> <span class="filename">summary_P[ParticipantID]_avg_scores_[Timestamp].csv</span></p>
+            
+            <p>This file provides a quick summary of the participant's average scores across all completed trials.</p>
+            
+            <ul>
+                <li><code>Participant_ID</code>: The ID of the participant.</li>
+                <li><code>Number_Of_Rated_Trials</code>: The total count of trials for which ratings were provided.</li>
+                <li><code>Average_Discomfort</code>: The average of all discomfort ratings.</li>
+                <li><code>Average_Brightness</code>: The average of all brightness ratings.</li>
+            </ul>
+        </div>
+
+        <div class="contact-info">
+            <h3>More Questions?</h3>
+            <p>Please email Brock at <strong>bpluimer@hs.uci.edu</strong></p>
+        </div>
+    </div>
+</body>
+</html>

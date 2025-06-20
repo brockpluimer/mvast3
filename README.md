@@ -121,8 +121,6 @@ Brock Pluimer, & Steven Harte. (2025). MVAST-3 Version 1 (Version v1.0) [Compute
 Harper, D. E., Gopinath, K., Smith, J. L., Gregory, M., Ichesco, E., Aronovich, S., Harris, R. E., Harte, S. E., Clauw, D. J., & Fleischer, C. C. (2023). Characterization of visual processing in temporomandibular disorders using functional magnetic resonance imaging. Brain and Behavior, 13(3), e2916. https://doi.org/10.1002/brb3.2916
 
 Kmiecik, M. J., Tu, F. F., Clauw, D. J., & Hellman, K. M. (2023). Multimodal hypersensitivity derived from quantitative sensory testing predicts pelvic pain outcome: An observational cohort study. Pain, 164(9), 2070–2083. https://doi.org/10.1097/j.pain.0000000000002909
-
-
 ```
 
 ## License

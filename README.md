@@ -116,8 +116,13 @@ For questions about the software or M-VAST 3 methodology, please contact:
 If you use M-VAST 3 in your research, please cite:
 
 ```
-Pluimer, Brock, & Harte, Steven. (2025). M-VAST 3: Michigan Visual Aversion Stress Test (v1.0.0). 
-Zenodo. https://doi.org/10.5281/zenodo.15700319
+Brock Pluimer, & Steven Harte. (2025). MVAST-3 Version 1 (Version v1.0) [Computer software]. Zenodo. https://doi.org/10.5281/ZENODO.15700319
+
+Harper, D. E., Gopinath, K., Smith, J. L., Gregory, M., Ichesco, E., Aronovich, S., Harris, R. E., Harte, S. E., Clauw, D. J., & Fleischer, C. C. (2023). Characterization of visual processing in temporomandibular disorders using functional magnetic resonance imaging. Brain and Behavior, 13(3), e2916. https://doi.org/10.1002/brb3.2916
+
+Kmiecik, M. J., Tu, F. F., Clauw, D. J., & Hellman, K. M. (2023). Multimodal hypersensitivity derived from quantitative sensory testing predicts pelvic pain outcome: An observational cohort study. Pain, 164(9), 2070–2083. https://doi.org/10.1097/j.pain.0000000000002909
+
+
 ```
 
 ## License

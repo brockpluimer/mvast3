@@ -14,34 +14,77 @@ This repository contains the complete M-VAST 3 platform, including source code, 
 
 ## Installation
 
-Choose one of the three installation methods below. **Option C (Conda)** is recommended for the most reliable setup.
+Choose one of the installation methods below. **Option A** is recommended for beginners who are new to programming or command line tools.
 
-### Option A: Manual Download (Simplest)
+### Option A: Simple Installation (Recommended for Beginners)
 
-**Best for users unfamiliar with Git or package managers**
+**Best for users unfamiliar with programming or the terminal**
 
-1. **Download the repository**
-   - Click the green **Code** button on this GitHub page
-   - Select **Download ZIP**
-   - Extract the downloaded `mvast3-main.zip` file
+#### Step 1: Download the Files
+1. Click the green **Code** button on this GitHub page
+2. Select **Download ZIP**
+3. Extract the downloaded `mvast3-main.zip` file to your Desktop or Documents folder
+4. Remember where you saved it!
 
-2. **Install dependencies**
-   - Ensure Python is installed on your system
-   - Open terminal/Command Prompt and navigate to the extracted folder:
-     ```bash
-     cd path/to/mvast3-main
-     ```
-   - Install required packages:
-     ```bash
-     pip install pygame pillow numpy ttkbootstrap
-     ```
+#### Step 2: Install Python
 
-3. **Run the application with one of the following commands**
-   ```bash
-   python mvast3.py
+**On Windows:**
+1. Open Command Prompt (search for "cmd" in the Start menu)
+2. Type `python` and press Enter
+3. This will open the Microsoft Store where you can install Python
+4. Click "Install" and wait for it to complete
 
-   python3 mvast3.py
-   ```
+**On Mac:**
+1. Go to [python.org/downloads](https://python.org/downloads)
+2. Download and install the latest version of Python
+3. Follow the installation prompts
+
+#### Step 3: Navigate to the Downloaded Files
+You need to tell your computer where to find the M-VAST 3 files.
+
+**On Windows:**
+1. Open Command Prompt (search for "cmd" in the Start menu)
+2. Type `cd Desktop\mvast3-main` (if you saved it to Desktop) or `cd Documents\mvast3-main` (if you saved it to Documents)
+3. Press Enter
+
+**On Mac:**
+1. Open Terminal (search for "Terminal" in Spotlight)
+2. Type `cd Desktop/mvast3-main` (if you saved it to Desktop) or `cd Documents/mvast3-main` (if you saved it to Documents)
+3. Press Enter
+
+**How to check you're in the right place:**
+- On Windows: type `dir` and press Enter
+- On Mac: type `ls` and press Enter
+
+You should see these three items listed:
+- `images`
+- `mvast3.py`
+- `mvast3_manual.html`
+
+If you don't see these files, you're in the wrong folder. Try navigating to where you actually saved the extracted files.
+
+#### Step 4: Install Required Packages
+In the same terminal/command prompt window, type this command:
+
+```bash
+python -m pip install pygame pillow numpy ttkbootstrap
+```
+
+**If you get an error saying "python is not recognized":**
+- Try using `python3` instead: `python3 -m pip install pygame pillow numpy ttkbootstrap`
+- Use `python3` for all future commands if `python` doesn't work
+
+#### Step 5: Run the Application
+```bash
+python mvast3.py
+```
+
+Or if `python` doesn't work:
+```bash
+python3 mvast3.py
+```
+
+The M-VAST 3 application window should now open!
 
 ### Option B: Python Virtual Environment (Standard)
 
@@ -70,14 +113,12 @@ Choose one of the three installation methods below. **Option C (Conda)** is reco
    pip install pygame pillow numpy ttkbootstrap
    ```
 
-4. **Run the application with one of the following commands**
+4. **Run the application**
    ```bash
    python mvast3.py
-
-   python3 mvast3.py
    ```
 
-### Option C: Conda Environment (Recommended)
+### Option C: Conda Environment (For Researchers)
 
 **Best for scientific computing and research environments**
 
@@ -98,12 +139,29 @@ Choose one of the three installation methods below. **Option C (Conda)** is reco
    conda activate mvast3
    ```
 
-4. 4. **Run the application with one of the following commands**
+4. **Run the application**
    ```bash
    python mvast3.py
-
-   python3 mvast3.py
    ```
+
+## Troubleshooting
+
+**"Python is not recognized" error:**
+- Try using `python3` instead of `python` in all commands
+- Make sure Python is properly installed
+
+**"No module named..." error:**
+- Make sure you ran the pip install command in the correct directory
+- Try the install command again
+
+**Can't find the files:**
+- Make sure you extracted the ZIP file
+- Use `dir` (Windows) or `ls` (Mac) to check what's in your current folder
+- Navigate to the correct folder using `cd` command
+
+**Still having trouble?**
+- Double-check that when you type `dir` (Windows) or `ls` (Mac), you see the three items: `images`, `mvast3.py`, and `mvast3_manual.html`
+- Make sure you're in the mvast3-main folder
 
 ## Getting Help
 
@@ -124,6 +182,7 @@ If you use M-VAST 3 in your research, please cite:
 ```
 Brock Pluimer, & Steven Harte. (2025). MVAST-3 Version 1 (Version v1.0) [Computer software]. Zenodo. https://doi.org/10.5281/ZENODO.15700319
 ```
+
 ## Additional reading
 
 For further reading, please see the below articles.
@@ -137,6 +196,7 @@ Kmiecik, M. J., Tu, F. F., Clauw, D. J., & Hellman, K. M. (2023). Multimodal hyp
 
 Kmiecik, M. J., Tu, F. F., Silton, R. L., Dillane, K. E., Roth, G. E., Harte, S. E., & Hellman, K. M. (2022). Cortical mechanisms of visual hypersensitivity in women at risk for chronic pelvic pain. Pain, 163(6), 1035–1048. https://doi.org/10.1097/j.pain.0000000000002469
 ```
+
 ## License
 
 This project is licensed under the MIT License - see below for details:

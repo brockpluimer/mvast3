@@ -36,9 +36,11 @@ Choose one of the three installation methods below. **Option C (Conda)** is reco
      pip install pygame pillow numpy ttkbootstrap
      ```
 
-3. **Run the application**
+3. **Run the application with one of the following commands**
    ```bash
    python mvast3.py
+
+   python3 mvast3.py
    ```
 
 ### Option B: Python Virtual Environment (Standard)
@@ -68,9 +70,11 @@ Choose one of the three installation methods below. **Option C (Conda)** is reco
    pip install pygame pillow numpy ttkbootstrap
    ```
 
-4. **Run the application**
+4. **Run the application with one of the following commands**
    ```bash
    python mvast3.py
+
+   python3 mvast3.py
    ```
 
 ### Option C: Conda Environment (Recommended)
@@ -94,9 +98,11 @@ Choose one of the three installation methods below. **Option C (Conda)** is reco
    conda activate mvast3
    ```
 
-4. **Run the application**
+4. 4. **Run the application with one of the following commands**
    ```bash
    python mvast3.py
+
+   python3 mvast3.py
    ```
 
 ## Getting Help

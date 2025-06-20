@@ -117,12 +117,20 @@ If you use M-VAST 3 in your research, please cite:
 
 ```
 Brock Pluimer, & Steven Harte. (2025). MVAST-3 Version 1 (Version v1.0) [Computer software]. Zenodo. https://doi.org/10.5281/ZENODO.15700319
+```
+## Additional reading
 
+For further reading, please see the below articles.
+
+```
 Harper, D. E., Gopinath, K., Smith, J. L., Gregory, M., Ichesco, E., Aronovich, S., Harris, R. E., Harte, S. E., Clauw, D. J., & Fleischer, C. C. (2023). Characterization of visual processing in temporomandibular disorders using functional magnetic resonance imaging. Brain and Behavior, 13(3), e2916. https://doi.org/10.1002/brb3.2916
 
-Kmiecik, M. J., Tu, F. F., Clauw, D. J., & Hellman, K. M. (2023). Multimodal hypersensitivity derived from quantitative sensory testing predicts pelvic pain outcome: An observational cohort study. Pain, 164(9), 2070–2083. https://doi.org/10.1097/j.pain.0000000000002909
-```
+Harte, S. E., Ichesco, E., Hampson, J. P., Peltier, S. J., Schmidt-Wilcke, T., Clauw, D. J., & Harris, R. E. (2016). Pharmacologic attenuation of cross-modal sensory augmentation within the chronic pain insula. Pain, 157(9), 1933–1945. https://doi.org/10.1097/j.pain.0000000000000593
 
+Kmiecik, M. J., Tu, F. F., Clauw, D. J., & Hellman, K. M. (2023). Multimodal hypersensitivity derived from quantitative sensory testing predicts pelvic pain outcome: An observational cohort study. Pain, 164(9), 2070–2083. https://doi.org/10.1097/j.pain.0000000000002909
+
+Kmiecik, M. J., Tu, F. F., Silton, R. L., Dillane, K. E., Roth, G. E., Harte, S. E., & Hellman, K. M. (2022). Cortical mechanisms of visual hypersensitivity in women at risk for chronic pelvic pain. Pain, 163(6), 1035–1048. https://doi.org/10.1097/j.pain.0000000000002469
+```
 ## License
 
 This project is licensed under the MIT License - see below for details:

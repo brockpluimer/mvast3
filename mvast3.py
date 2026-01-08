@@ -300,7 +300,7 @@ class SetupGeneratorWindow:
         small_font_size = 9
         param_widgets_font_size = 9
 
-        id_frame = ttk.LabelFrame(main_frame, text="Experiment Identifier", padding=lf_pad)
+        id_frame = ttk.LabelFrame(main_frame, text="Experiment Identifier")
         id_frame.pack(fill=X, pady=(0, 10)) 
         ttk.Label(id_frame, text="Experiment ID:", font=("", lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.exp_id_var = tk.StringVar()
@@ -309,7 +309,7 @@ class SetupGeneratorWindow:
         ttk.Label(id_frame, text="(e.g., Study1_CondA_Group1)", font=("", small_font_size)).grid(row=0, column=2, padx=5, pady=5, sticky="w")
         id_frame.columnconfigure(1, weight=1)
 
-        dir_frame = ttk.LabelFrame(main_frame, text="Base Output Directory", padding=lf_pad)
+        dir_frame = ttk.LabelFrame(main_frame, text="Base Output Directory")
         dir_frame.pack(fill=X, pady=(0, 10))
         ttk.Label(dir_frame, text="Directory:", font=("", lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.log_dir_base_var = tk.StringVar(value=DEFAULT_LOG_DIR_BASE) 
@@ -317,13 +317,13 @@ class SetupGeneratorWindow:
         ttk.Button(dir_frame, text="Browse...", command=self.browse_log_dir_base, style='outline.TButton').grid(row=0, column=2, padx=5, pady=5)
         dir_frame.columnconfigure(1, weight=1)
 
-        mode_frame = ttk.LabelFrame(main_frame, text="Parameter Mode", padding=lf_pad)
+        mode_frame = ttk.LabelFrame(main_frame, text="Parameter Mode")
         mode_frame.pack(fill=X, pady=(0, 10))
         self.param_mode_var = tk.StringVar(value="Default")
         ttk.Radiobutton(mode_frame, text="Default Parameters", variable=self.param_mode_var, value="Default", command=self.toggle_custom_params).pack(side=LEFT, padx=10)
         ttk.Radiobutton(mode_frame, text="Custom Parameters", variable=self.param_mode_var, value="Custom", command=self.toggle_custom_params).pack(side=LEFT, padx=10)
 
-        self.custom_params_frame = ttk.LabelFrame(main_frame, text="Custom Experiment Parameters", padding=lf_pad)
+        self.custom_params_frame = ttk.LabelFrame(main_frame, text="Custom Experiment Parameters")
         self.custom_params_frame.pack(fill=X, pady=(0, 10))
         
         ttk.Label(self.custom_params_frame, text="Stimulus Duration (s):", font=("", lbl_font_size)).grid(row=0, column=0, padx=5, pady=2, sticky="w")
@@ -516,7 +516,7 @@ class ExperimentRunnerWindow:
         lf_pad = (10,5) 
         lbl_font_size = 10
 
-        csv_frame = ttk.LabelFrame(main_frame, text="Experiment Setup File", padding=lf_pad)
+        csv_frame = ttk.LabelFrame(main_frame, text="Experiment Setup File")
         csv_frame.pack(fill=X, pady=(0, 10))
         ttk.Label(csv_frame, text="Master Trial CSV:", font=("",lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.master_csv_var = tk.StringVar()
@@ -525,7 +525,7 @@ class ExperimentRunnerWindow:
         ttk.Button(csv_frame, text="Browse...", command=self.browse_master_csv, style='outline.TButton').grid(row=0, column=2, padx=5, pady=5)
         csv_frame.columnconfigure(1, weight=1)
 
-        part_id_frame = ttk.LabelFrame(main_frame, text="Participant Information", padding=lf_pad)
+        part_id_frame = ttk.LabelFrame(main_frame, text="Participant Information")
         part_id_frame.pack(fill=X, pady=(0,10))
         ttk.Label(part_id_frame, text="Participant ID:", font=("",lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.participant_id_var = tk.StringVar()
@@ -533,7 +533,7 @@ class ExperimentRunnerWindow:
         self.part_id_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         part_id_frame.columnconfigure(1, weight=1)
 
-        img_frame = ttk.LabelFrame(main_frame, text="Stimulus Image Files", padding=lf_pad)
+        img_frame = ttk.LabelFrame(main_frame, text="Stimulus Image Files")
         img_frame.pack(fill=X, pady=(0, 10))
         self.img1_path_var, self.img2_path_var = tk.StringVar(), tk.StringVar()
         ttk.Label(img_frame, text="Image 1:", font=("",lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
@@ -544,7 +544,7 @@ class ExperimentRunnerWindow:
         ttk.Button(img_frame, text="Browse...", command=self.browse_image2, style='outline.TButton').grid(row=1, column=2, padx=5, pady=5)
         img_frame.columnconfigure(1, weight=1)
 
-        log_dir_frame = ttk.LabelFrame(main_frame, text="Participant Data Log Directory", padding=lf_pad)
+        log_dir_frame = ttk.LabelFrame(main_frame, text="Participant Data Log Directory")
         log_dir_frame.pack(fill=X, pady=(0, 15))
         ttk.Label(log_dir_frame, text="Directory:", font=("",lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.log_dir_participant_var = tk.StringVar(value=self.config.log_dir_participant)

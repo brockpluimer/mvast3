@@ -281,218 +281,652 @@ Step 3.  DURING EXPERIMENT (for Participant):
 # --- Setup Generator Window ---
 class SetupGeneratorWindow:
     def __init__(self, parent, app):
-        self.parent = parent; self.app = app
+        self.parent = parent
+        self.app = app
         self.window = ttk.Toplevel(parent)
         self.window.title("M-VAST 3 - Generate Experiment Setup")
-        self.window.geometry("650x700")
-        self.window.minsize(600, 650) 
+        
+        # Set geometry BEFORE creating widgets
+        self.window.geometry("700x750")
+        self.window.minsize(650, 700)
+        
+        # Force the window to fully initialize before adding content
+        self.window.update_idletasks()
+        
+        # Grab focus
         self.window.grab_set()
+        self.window.focus_force()
+        
+        # Initialize variables BEFORE creating GUI
+        self._init_variables()
+        
+        # Now create the GUI
         self.create_setup_gui()
         
+        # Force another update after GUI creation
+        self.window.update_idletasks()
+        self.window.update()
+        
+    def _init_variables(self):
+        """Initialize all tkinter variables before GUI creation."""
+        self.exp_id_var = tk.StringVar(value="")
+        self.log_dir_base_var = tk.StringVar(value=DEFAULT_LOG_DIR_BASE)
+        self.param_mode_var = tk.StringVar(value="Default")
+        self.stim_dur_var = tk.DoubleVar(value=DEFAULT_STIMULUS_DURATION)
+        self.fix_dur_var = tk.DoubleVar(value=DEFAULT_FIXATION_DURATION)
+        self.hz_var = tk.DoubleVar(value=DEFAULT_CHECKERBOARD_HZ)
+        self.rand_blocks_var = tk.IntVar(value=DEFAULT_RANDOMIZED_BLOCKS_COUNT)
+        
     def create_setup_gui(self):
-        main_frame = ttk.Frame(self.window, padding=(20,20))
+        # Create main scrollable container in case window is small
+        main_frame = ttk.Frame(self.window, padding=(20, 20))
         main_frame.pack(fill=BOTH, expand=YES)
         
-        ttk.Button(main_frame, text="← Back to Main Menu", command=self.back_to_main, style='secondary.TButton').pack(anchor='w', pady=(0, 15))
+        # Force frame to expand
+        main_frame.update_idletasks()
         
-        lf_pad = (10, 5)  
-        lbl_font_size = 10
-        small_font_size = 9
-        param_widgets_font_size = 9
-
-        id_frame = ttk.LabelFrame(main_frame, text="Experiment Identifier")
-        id_frame.pack(fill=X, pady=(0, 10)) 
-        ttk.Label(id_frame, text="Experiment ID:", font=("", lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        self.exp_id_var = tk.StringVar()
-        self.exp_id_entry = ttk.Entry(id_frame, textvariable=self.exp_id_var, width=30, font=("", lbl_font_size))
-        self.exp_id_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
-        ttk.Label(id_frame, text="(e.g., Study1_CondA_Group1)", font=("", small_font_size)).grid(row=0, column=2, padx=5, pady=5, sticky="w")
+        # --- Back Button ---
+        back_btn = ttk.Button(
+            main_frame, 
+            text="← Back to Main Menu", 
+            command=self.back_to_main, 
+            style='secondary.TButton'
+        )
+        back_btn.pack(anchor='w', pady=(0, 15))
+        
+        # --- Font sizes ---
+        lbl_font = ("TkDefaultFont", 10)
+        small_font = ("TkDefaultFont", 9)
+        entry_font = ("TkDefaultFont", 10)
+        
+        # ============================================================
+        # SECTION 1: Experiment Identifier
+        # ============================================================
+        id_frame = ttk.LabelFrame(main_frame, text="Experiment Identifier", padding=(10, 10))
+        id_frame.pack(fill=X, pady=(0, 10), ipady=5)
+        
+        # Use grid with explicit row/column configuration
         id_frame.columnconfigure(1, weight=1)
-
-        dir_frame = ttk.LabelFrame(main_frame, text="Base Output Directory")
-        dir_frame.pack(fill=X, pady=(0, 10))
-        ttk.Label(dir_frame, text="Directory:", font=("", lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        self.log_dir_base_var = tk.StringVar(value=DEFAULT_LOG_DIR_BASE) 
-        ttk.Entry(dir_frame, textvariable=self.log_dir_base_var, width=40, state="readonly", font=("", lbl_font_size)).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
-        ttk.Button(dir_frame, text="Browse...", command=self.browse_log_dir_base, style='outline.TButton').grid(row=0, column=2, padx=5, pady=5)
+        
+        ttk.Label(
+            id_frame, 
+            text="Experiment ID:", 
+            font=lbl_font
+        ).grid(row=0, column=0, padx=(5, 10), pady=8, sticky="w")
+        
+        self.exp_id_entry = ttk.Entry(
+            id_frame, 
+            textvariable=self.exp_id_var, 
+            width=30, 
+            font=entry_font
+        )
+        self.exp_id_entry.grid(row=0, column=1, padx=5, pady=8, sticky="ew")
+        
+        ttk.Label(
+            id_frame, 
+            text="(e.g., Study1_CondA_Group1)", 
+            font=small_font,
+            foreground="gray"
+        ).grid(row=0, column=2, padx=(10, 5), pady=8, sticky="w")
+        
+        # Force the frame to render
+        id_frame.update_idletasks()
+        
+        # ============================================================
+        # SECTION 2: Base Output Directory
+        # ============================================================
+        dir_frame = ttk.LabelFrame(main_frame, text="Base Output Directory", padding=(10, 10))
+        dir_frame.pack(fill=X, pady=(0, 10), ipady=5)
+        
         dir_frame.columnconfigure(1, weight=1)
-
-        mode_frame = ttk.LabelFrame(main_frame, text="Parameter Mode")
-        mode_frame.pack(fill=X, pady=(0, 10))
-        self.param_mode_var = tk.StringVar(value="Default")
-        ttk.Radiobutton(mode_frame, text="Default Parameters", variable=self.param_mode_var, value="Default", command=self.toggle_custom_params).pack(side=LEFT, padx=10)
-        ttk.Radiobutton(mode_frame, text="Custom Parameters", variable=self.param_mode_var, value="Custom", command=self.toggle_custom_params).pack(side=LEFT, padx=10)
-
-        self.custom_params_frame = ttk.LabelFrame(main_frame, text="Custom Experiment Parameters")
-        self.custom_params_frame.pack(fill=X, pady=(0, 10))
         
-        ttk.Label(self.custom_params_frame, text="Stimulus Duration (s):", font=("", lbl_font_size)).grid(row=0, column=0, padx=5, pady=2, sticky="w")
-        self.stim_dur_var = tk.DoubleVar(value=DEFAULT_STIMULUS_DURATION)
-        self.stim_dur_spinbox = ttk.Spinbox(self.custom_params_frame, from_=1.0, to=300.0, increment=1.0, textvariable=self.stim_dur_var, width=8, format="%.1f", font=("", param_widgets_font_size))
-        self.stim_dur_spinbox.grid(row=0, column=1, padx=5, pady=2, sticky="w")
+        ttk.Label(
+            dir_frame, 
+            text="Directory:", 
+            font=lbl_font
+        ).grid(row=0, column=0, padx=(5, 10), pady=8, sticky="w")
         
-        ttk.Label(self.custom_params_frame, text="Fixation Duration (s):", font=("", lbl_font_size)).grid(row=1, column=0, padx=5, pady=2, sticky="w")
-        self.fix_dur_var = tk.DoubleVar(value=DEFAULT_FIXATION_DURATION)
-        self.fix_dur_spinbox = ttk.Spinbox(self.custom_params_frame, from_=0.5, to=300.0, increment=0.5, textvariable=self.fix_dur_var, width=8, format="%.1f", font=("", param_widgets_font_size))
-        self.fix_dur_spinbox.grid(row=1, column=1, padx=5, pady=2, sticky="w")
-
-        ttk.Label(self.custom_params_frame, text="Checkerboard Freq (Hz):", font=("", lbl_font_size)).grid(row=2, column=0, padx=5, pady=2, sticky="w")
-        self.hz_var = tk.DoubleVar(value=DEFAULT_CHECKERBOARD_HZ)
-        self.hz_spinbox = ttk.Spinbox(self.custom_params_frame, from_=0.1, to=60.0, increment=0.1, textvariable=self.hz_var, width=8, format="%.1f", font=("", param_widgets_font_size))
-        self.hz_spinbox.grid(row=2, column=1, padx=5, pady=2, sticky="w")
-
-        ttk.Label(self.custom_params_frame, text="Num. Randomized Blocks:", font=("", lbl_font_size)).grid(row=3, column=0, padx=5, pady=2, sticky="w")
-        self.rand_blocks_var = tk.IntVar(value=DEFAULT_RANDOMIZED_BLOCKS_COUNT)
-        self.rand_blocks_spinbox = ttk.Spinbox(self.custom_params_frame, from_=1, to=20, increment=1, textvariable=self.rand_blocks_var, width=8, font=("", param_widgets_font_size))
-        self.rand_blocks_spinbox.grid(row=3, column=1, padx=5, pady=2, sticky="w")
-        ttk.Label(self.custom_params_frame, text=f"(each with {TRIALS_PER_BLOCK} trials)", font=("", small_font_size)).grid(row=3, column=2, padx=5, pady=2, sticky="w")
+        self.dir_entry = ttk.Entry(
+            dir_frame, 
+            textvariable=self.log_dir_base_var, 
+            width=45, 
+            state="readonly", 
+            font=entry_font
+        )
+        self.dir_entry.grid(row=0, column=1, padx=5, pady=8, sticky="ew")
         
-        self.info_label = ttk.Label(main_frame, text="", justify="left", wraplength=600, font=("",small_font_size)) 
-        self.info_label.pack(fill=X, pady=(10,5))
-
-        self.generate_button = ttk.Button(main_frame, text="Generate Experiment Files", command=self.process_generation, style='success.TButton', padding=(10,5))
-        self.generate_button.pack(pady=(10,5))
+        ttk.Button(
+            dir_frame, 
+            text="Browse...", 
+            command=self.browse_log_dir_base, 
+            style='outline.TButton'
+        ).grid(row=0, column=2, padx=(10, 5), pady=8)
         
+        dir_frame.update_idletasks()
+        
+        # ============================================================
+        # SECTION 3: Parameter Mode Selection
+        # ============================================================
+        mode_frame = ttk.LabelFrame(main_frame, text="Parameter Mode", padding=(10, 10))
+        mode_frame.pack(fill=X, pady=(0, 10), ipady=5)
+        
+        radio_container = ttk.Frame(mode_frame)
+        radio_container.pack(fill=X, padx=5, pady=5)
+        
+        self.default_radio = ttk.Radiobutton(
+            radio_container, 
+            text="Default Parameters", 
+            variable=self.param_mode_var, 
+            value="Default", 
+            command=self.toggle_custom_params
+        )
+        self.default_radio.pack(side=LEFT, padx=(5, 20))
+        
+        self.custom_radio = ttk.Radiobutton(
+            radio_container, 
+            text="Custom Parameters", 
+            variable=self.param_mode_var, 
+            value="Custom", 
+            command=self.toggle_custom_params
+        )
+        self.custom_radio.pack(side=LEFT, padx=5)
+        
+        mode_frame.update_idletasks()
+        
+        # ============================================================
+        # SECTION 4: Custom Parameters
+        # ============================================================
+        self.custom_params_frame = ttk.LabelFrame(
+            main_frame, 
+            text="Custom Experiment Parameters", 
+            padding=(10, 10)
+        )
+        self.custom_params_frame.pack(fill=X, pady=(0, 10), ipady=5)
+        
+        # Configure grid columns
+        self.custom_params_frame.columnconfigure(0, weight=0, minsize=200)
+        self.custom_params_frame.columnconfigure(1, weight=0, minsize=100)
+        self.custom_params_frame.columnconfigure(2, weight=1)
+        
+        # Row 0: Stimulus Duration
+        ttk.Label(
+            self.custom_params_frame, 
+            text="Stimulus Duration (s):", 
+            font=lbl_font
+        ).grid(row=0, column=0, padx=(5, 10), pady=8, sticky="w")
+        
+        self.stim_dur_spinbox = ttk.Spinbox(
+            self.custom_params_frame, 
+            from_=1.0, 
+            to=300.0, 
+            increment=1.0, 
+            textvariable=self.stim_dur_var, 
+            width=10, 
+            format="%.1f", 
+            font=entry_font
+        )
+        self.stim_dur_spinbox.grid(row=0, column=1, padx=5, pady=8, sticky="w")
+        
+        # Row 1: Fixation Duration
+        ttk.Label(
+            self.custom_params_frame, 
+            text="Fixation Duration (s):", 
+            font=lbl_font
+        ).grid(row=1, column=0, padx=(5, 10), pady=8, sticky="w")
+        
+        self.fix_dur_spinbox = ttk.Spinbox(
+            self.custom_params_frame, 
+            from_=0.5, 
+            to=300.0, 
+            increment=0.5, 
+            textvariable=self.fix_dur_var, 
+            width=10, 
+            format="%.1f", 
+            font=entry_font
+        )
+        self.fix_dur_spinbox.grid(row=1, column=1, padx=5, pady=8, sticky="w")
+        
+        # Row 2: Checkerboard Frequency
+        ttk.Label(
+            self.custom_params_frame, 
+            text="Checkerboard Freq (Hz):", 
+            font=lbl_font
+        ).grid(row=2, column=0, padx=(5, 10), pady=8, sticky="w")
+        
+        self.hz_spinbox = ttk.Spinbox(
+            self.custom_params_frame, 
+            from_=0.1, 
+            to=60.0, 
+            increment=0.1, 
+            textvariable=self.hz_var, 
+            width=10, 
+            format="%.1f", 
+            font=entry_font
+        )
+        self.hz_spinbox.grid(row=2, column=1, padx=5, pady=8, sticky="w")
+        
+        # Row 3: Number of Randomized Blocks
+        ttk.Label(
+            self.custom_params_frame, 
+            text="Num. Randomized Blocks:", 
+            font=lbl_font
+        ).grid(row=3, column=0, padx=(5, 10), pady=8, sticky="w")
+        
+        self.rand_blocks_spinbox = ttk.Spinbox(
+            self.custom_params_frame, 
+            from_=1, 
+            to=20, 
+            increment=1, 
+            textvariable=self.rand_blocks_var, 
+            width=10, 
+            font=entry_font
+        )
+        self.rand_blocks_spinbox.grid(row=3, column=1, padx=5, pady=8, sticky="w")
+        
+        ttk.Label(
+            self.custom_params_frame, 
+            text=f"(each with {TRIALS_PER_BLOCK} trials)", 
+            font=small_font,
+            foreground="gray"
+        ).grid(row=3, column=2, padx=(10, 5), pady=8, sticky="w")
+        
+        self.custom_params_frame.update_idletasks()
+        
+        # ============================================================
+        # SECTION 5: Info Label
+        # ============================================================
+        info_container = ttk.Frame(main_frame, padding=(5, 10))
+        info_container.pack(fill=X, pady=(5, 5))
+        
+        self.info_label = ttk.Label(
+            info_container, 
+            text="", 
+            justify="left", 
+            wraplength=600, 
+            font=small_font
+        )
+        self.info_label.pack(fill=X, anchor="w")
+        
+        # ============================================================
+        # SECTION 6: Generate Button
+        # ============================================================
+        btn_container = ttk.Frame(main_frame, padding=(0, 10))
+        btn_container.pack(fill=X, pady=(10, 5))
+        
+        self.generate_button = ttk.Button(
+            btn_container, 
+            text="Generate Experiment Files", 
+            command=self.process_generation, 
+            style='success.TButton'
+        )
+        self.generate_button.pack(pady=10, ipadx=20, ipady=8)
+        
+        # ============================================================
+        # Final Setup
+        # ============================================================
+        
+        # Apply initial state to custom params (disable them by default)
         self.toggle_custom_params()
-        self.exp_id_entry.focus()
         
-    def back_to_main(self): self.window.destroy()
+        # Update info label
+        self.update_info_label()
+        
+        # Set focus to experiment ID entry
+        self.exp_id_entry.focus_set()
+        
+        # Final forced update to ensure everything renders
+        self.window.update_idletasks()
+        self.window.update()
+        
+    def back_to_main(self):
+        self.window.destroy()
     
     def toggle_custom_params(self):
+        """Enable/disable custom parameter widgets based on mode selection."""
         mode = self.param_mode_var.get()
-        widgets = [self.stim_dur_spinbox, self.fix_dur_spinbox, self.hz_spinbox, self.rand_blocks_spinbox]
-        state = NORMAL if mode == "Custom" else DISABLED
-        for widget in widgets: widget.config(state=state)
+        
+        widgets_to_toggle = [
+            self.stim_dur_spinbox, 
+            self.fix_dur_spinbox, 
+            self.hz_spinbox, 
+            self.rand_blocks_spinbox
+        ]
+        
         if mode == "Custom":
-            for var in [self.stim_dur_var, self.fix_dur_var, self.hz_var, self.rand_blocks_var]:
-                var.trace_add("write", lambda *a: self.update_info_label())
-        else: 
+            new_state = "normal"
+        else:
+            new_state = "disabled"
+            # Reset to defaults when switching back to Default mode
             self.stim_dur_var.set(DEFAULT_STIMULUS_DURATION)
             self.fix_dur_var.set(DEFAULT_FIXATION_DURATION)
             self.hz_var.set(DEFAULT_CHECKERBOARD_HZ)
             self.rand_blocks_var.set(DEFAULT_RANDOMIZED_BLOCKS_COUNT)
+        
+        for widget in widgets_to_toggle:
+            try:
+                widget.config(state=new_state)
+            except Exception as e:
+                print(f"Warning: Could not set widget state: {e}")
+        
+        # Update the info label
         self.update_info_label()
 
     def update_info_label(self):
+        """Update the information label with current settings."""
         is_default = self.param_mode_var.get() == "Default"
-        try: 
-            stim = DEFAULT_STIMULUS_DURATION if is_default else self.stim_dur_var.get()
-            fix = DEFAULT_FIXATION_DURATION if is_default else self.fix_dur_var.get()
-            hz = DEFAULT_CHECKERBOARD_HZ if is_default else self.hz_var.get()
-            blocks = DEFAULT_RANDOMIZED_BLOCKS_COUNT if is_default else self.rand_blocks_var.get()
-            if not is_default: 
-                float(stim); float(fix); float(hz); int(blocks)
-        except (tk.TclError, ValueError): 
-             self.info_label.config(text="Enter valid custom parameters."); return
         
-        rand_trials = blocks * TRIALS_PER_BLOCK
+        try:
+            if is_default:
+                stim = DEFAULT_STIMULUS_DURATION
+                fix = DEFAULT_FIXATION_DURATION
+                hz = DEFAULT_CHECKERBOARD_HZ
+                blocks = DEFAULT_RANDOMIZED_BLOCKS_COUNT
+            else:
+                stim = self.stim_dur_var.get()
+                fix = self.fix_dur_var.get()
+                hz = self.hz_var.get()
+                blocks = self.rand_blocks_var.get()
+                
+                # Validate the values
+                float(stim)
+                float(fix)
+                float(hz)
+                int(blocks)
+        except (tk.TclError, ValueError):
+            self.info_label.config(text="⚠ Please enter valid custom parameters.")
+            return
+        
+        rand_trials = int(blocks) * TRIALS_PER_BLOCK
         total_trials = RAMP_UP_TRIALS_COUNT + rand_trials
-        self.info_label.config(text=
+        
+        brightness_str = ', '.join(map(str, BRIGHTNESS_LEVELS_BASE))
+        
+        info_text = (
             f"Mode: {self.param_mode_var.get()}\n"
             f"Total trials to be generated: {total_trials}\n"
-            f"- Ramp-up: {RAMP_UP_TRIALS_COUNT} trials (brightness: {', '.join(map(str, BRIGHTNESS_LEVELS_BASE))})\n"
-            f"- Randomized: {blocks} blocks of {TRIALS_PER_BLOCK} trials each (total {rand_trials} randomized trials).\n"
-            f"- Per trial: Stimulus={stim:.1f}s, Fixation={fix:.1f}s, Freq={hz:.1f}Hz.\n"
-            f"Output: Master trial CSV in '{SETUPS_SUBDIR}', schedule in '{SCHEDULES_SUBDIR}'.")
+            f"  • Ramp-up: {RAMP_UP_TRIALS_COUNT} trials (brightness: {brightness_str})\n"
+            f"  • Randomized: {int(blocks)} blocks × {TRIALS_PER_BLOCK} trials = {rand_trials} trials\n"
+            f"  • Per trial: Stimulus={float(stim):.1f}s, Fixation={float(fix):.1f}s, Freq={float(hz):.1f}Hz\n"
+            f"Output: Master trial CSV in '{SETUPS_SUBDIR}/', schedule in '{SCHEDULES_SUBDIR}/'"
+        )
+        
+        self.info_label.config(text=info_text)
 
     def browse_log_dir_base(self):
-        dirpath = filedialog.askdirectory(parent=self.window, initialdir=self.log_dir_base_var.get(), title="Select Base Output Directory")
-        if dirpath: self.log_dir_base_var.set(dirpath)
+        """Open directory browser for base output directory."""
+        current_dir = self.log_dir_base_var.get()
+        if not os.path.exists(current_dir):
+            current_dir = APP_BASE_PATH
+            
+        dirpath = filedialog.askdirectory(
+            parent=self.window, 
+            initialdir=current_dir, 
+            title="Select Base Output Directory"
+        )
+        
+        if dirpath:
+            self.log_dir_base_var.set(dirpath)
 
     def validate_inputs(self):
+        """Validate all user inputs before generation."""
         self.exp_id = self.exp_id_var.get().strip()
-        self.log_dir_base = self.log_dir_base_var.get().strip() 
-        if not self.exp_id: messagebox.showerror("Input Error", "Experiment ID cannot be empty.", parent=self.window); return False
-        if any(c in self.exp_id for c in r'/\:*?"<>|'): messagebox.showerror("Input Error", "Experiment ID contains invalid characters.", parent=self.window); return False
-        if not self.log_dir_base: messagebox.showerror("Input Error", "Base Output Directory cannot be empty.", parent=self.window); return False
+        self.log_dir_base = self.log_dir_base_var.get().strip()
+        
+        # Check Experiment ID
+        if not self.exp_id:
+            messagebox.showerror(
+                "Input Error", 
+                "Experiment ID cannot be empty.", 
+                parent=self.window
+            )
+            self.exp_id_entry.focus_set()
+            return False
+        
+        # Check for invalid characters in Experiment ID
+        invalid_chars = r'/\:*?"<>|'
+        if any(c in self.exp_id for c in invalid_chars):
+            messagebox.showerror(
+                "Input Error", 
+                f"Experiment ID contains invalid characters.\nAvoid: {invalid_chars}", 
+                parent=self.window
+            )
+            self.exp_id_entry.focus_set()
+            return False
+        
+        # Check Base Output Directory
+        if not self.log_dir_base:
+            messagebox.showerror(
+                "Input Error", 
+                "Base Output Directory cannot be empty.", 
+                parent=self.window
+            )
+            return False
+        
+        # Validate custom parameters if in Custom mode
         if self.param_mode_var.get() == "Custom":
             try:
-                s, f, h, b = self.stim_dur_var.get(), self.fix_dur_var.get(), self.hz_var.get(), self.rand_blocks_var.get()
-                if not (0 < s <= 300): raise ValueError("Stimulus duration out of range (1-300).")
-                if not (0 < f <= 300): raise ValueError("Fixation duration out of range (0.5-300).")
-                if not (0 < h <= 60): raise ValueError("Frequency out of range (0.1-60).")
-                if not (1 <= b <= 20): raise ValueError("Number of randomized blocks out of range (1-20).")
-            except (tk.TclError, ValueError) as ve: messagebox.showerror("Input Error", str(ve), parent=self.window); return False
+                s = self.stim_dur_var.get()
+                f = self.fix_dur_var.get()
+                h = self.hz_var.get()
+                b = self.rand_blocks_var.get()
+                
+                if not (0 < s <= 300):
+                    raise ValueError("Stimulus duration must be between 1 and 300 seconds.")
+                if not (0 < f <= 300):
+                    raise ValueError("Fixation duration must be between 0.5 and 300 seconds.")
+                if not (0 < h <= 60):
+                    raise ValueError("Frequency must be between 0.1 and 60 Hz.")
+                if not (1 <= b <= 20):
+                    raise ValueError("Number of randomized blocks must be between 1 and 20.")
+                    
+            except tk.TclError:
+                messagebox.showerror(
+                    "Input Error", 
+                    "Please enter valid numeric values for all custom parameters.", 
+                    parent=self.window
+                )
+                return False
+            except ValueError as ve:
+                messagebox.showerror(
+                    "Input Error", 
+                    str(ve), 
+                    parent=self.window
+                )
+                return False
+        
         return True
 
     def get_current_params(self):
-        return {"stim_duration": DEFAULT_STIMULUS_DURATION, "fixation_duration": DEFAULT_FIXATION_DURATION,
-                "hz": DEFAULT_CHECKERBOARD_HZ, "randomized_blocks": DEFAULT_RANDOMIZED_BLOCKS_COUNT} \
-               if self.param_mode_var.get() == "Default" else \
-               {"stim_duration": self.stim_dur_var.get(), "fixation_duration": self.fix_dur_var.get(),
-                "hz": self.hz_var.get(), "randomized_blocks": self.rand_blocks_var.get()}
+        """Get current parameter values based on mode."""
+        if self.param_mode_var.get() == "Default":
+            return {
+                "stim_duration": DEFAULT_STIMULUS_DURATION,
+                "fixation_duration": DEFAULT_FIXATION_DURATION,
+                "hz": DEFAULT_CHECKERBOARD_HZ,
+                "randomized_blocks": DEFAULT_RANDOMIZED_BLOCKS_COUNT
+            }
+        else:
+            return {
+                "stim_duration": self.stim_dur_var.get(),
+                "fixation_duration": self.fix_dur_var.get(),
+                "hz": self.hz_var.get(),
+                "randomized_blocks": self.rand_blocks_var.get()
+            }
 
     def get_or_create_brightness_schedule(self, num_rand_blocks):
+        """Load existing brightness schedule or create a new one."""
         sched_dir = os.path.join(self.log_dir_base, SCHEDULES_SUBDIR)
         os.makedirs(sched_dir, exist_ok=True)
         sched_file = os.path.join(sched_dir, f"{self.exp_id}_brightness_schedule.csv")
-        factors, expected_len = [], TRIALS_PER_BLOCK * num_rand_blocks
+        
+        factors = []
+        expected_len = TRIALS_PER_BLOCK * num_rand_blocks
+        
+        # Try to load existing schedule
         if os.path.exists(sched_file):
             try:
-                with open(sched_file, 'r', newline='') as f: factors = [float(r[0]) for r in csv.reader(f) if r]
+                with open(sched_file, 'r', newline='') as f:
+                    reader = csv.reader(f)
+                    factors = [float(row[0]) for row in reader if row]
+                
                 if len(factors) == expected_len:
-                    messagebox.showinfo("Schedule Loaded", f"Loaded existing schedule ({len(factors)} trials) for ID: {self.exp_id}", parent=self.window)
+                    messagebox.showinfo(
+                        "Schedule Loaded", 
+                        f"Loaded existing schedule ({len(factors)} trials) for ID: {self.exp_id}", 
+                        parent=self.window
+                    )
                     return factors
-                msg = f"Existing schedule for ID '{self.exp_id}' has {len(factors)} trials, current settings need {expected_len}.\nRegenerate?"
-                if not messagebox.askyesno("Schedule Mismatch", msg, parent=self.window): return "cancelled"
-                factors = [] 
-            except Exception as e: messagebox.showerror("Schedule Load Error", f"Error loading {sched_file}:\n{e}\nRegenerating.", parent=self.window); factors = []
-        if not factors: 
+                else:
+                    msg = (
+                        f"Existing schedule for ID '{self.exp_id}' has {len(factors)} trials, "
+                        f"but current settings need {expected_len}.\n\n"
+                        f"Do you want to regenerate the schedule?"
+                    )
+                    if not messagebox.askyesno("Schedule Mismatch", msg, parent=self.window):
+                        return "cancelled"
+                    factors = []  # Will regenerate below
+                    
+            except Exception as e:
+                messagebox.showerror(
+                    "Schedule Load Error", 
+                    f"Error loading {sched_file}:\n{e}\n\nRegenerating schedule.", 
+                    parent=self.window
+                )
+                factors = []
+        
+        # Generate new schedule
+        if not factors:
             for _ in range(num_rand_blocks):
-                shuffled = BRIGHTNESS_LEVELS_BASE[:]; random.shuffle(shuffled); factors.extend(shuffled)
+                shuffled = BRIGHTNESS_LEVELS_BASE[:]
+                random.shuffle(shuffled)
+                factors.extend(shuffled)
+            
             try:
-                with open(sched_file, 'w', newline='') as f: csv.writer(f).writerows([[f_val] for f_val in factors])
-                messagebox.showinfo("Schedule Generated", f"New schedule ({len(factors)} trials) saved for ID: {self.exp_id}", parent=self.window)
-            except Exception as e: messagebox.showerror("Schedule Save Error", f"Could not save {sched_file}:\n{e}", parent=self.window); return None 
+                with open(sched_file, 'w', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerows([[f_val] for f_val in factors])
+                
+                messagebox.showinfo(
+                    "Schedule Generated", 
+                    f"New schedule ({len(factors)} trials) saved for ID: {self.exp_id}\n\n"
+                    f"File: {sched_file}", 
+                    parent=self.window
+                )
+            except Exception as e:
+                messagebox.showerror(
+                    "Schedule Save Error", 
+                    f"Could not save {sched_file}:\n{e}", 
+                    parent=self.window
+                )
+                return None
+        
         return factors
 
     def generate_master_trial_csv(self, full_brightness_schedule, params):
+        """Generate the master trial CSV file."""
         setups_dir = os.path.join(self.log_dir_base, SETUPS_SUBDIR)
         os.makedirs(setups_dir, exist_ok=True)
         master_file = os.path.join(setups_dir, f"{self.exp_id}_master_trials.csv")
-        header = ['trial_number', 'block_number', 'trial_in_block', 'brightness_factor',
-                  'stimulus_duration', 'fixation_duration', 'checkerboard_hz']
+        
+        header = [
+            'trial_number', 
+            'block_number', 
+            'trial_in_block', 
+            'brightness_factor',
+            'stimulus_duration', 
+            'fixation_duration', 
+            'checkerboard_hz'
+        ]
+        
         try:
             with open(master_file, 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(header)
-
-                # --- FIX IMPLEMENTED HERE ---
-                # Safely get parameters using .get() with a default value to prevent KeyErrors
+                
+                # Safely get parameters with defaults
                 stim_dur = params.get("stim_duration", DEFAULT_STIMULUS_DURATION)
                 fix_dur = params.get("fixation_duration", DEFAULT_FIXATION_DURATION)
                 hz = params.get("hz", DEFAULT_CHECKERBOARD_HZ)
-
+                
                 for i, bf in enumerate(full_brightness_schedule):
                     trial_num = i + 1
+                    
                     if i < RAMP_UP_TRIALS_COUNT:
-                        block_num, trial_in_block = 0, i + 1
+                        block_num = 0
+                        trial_in_block = i + 1
                     else:
                         rand_idx = i - RAMP_UP_TRIALS_COUNT
                         block_num = (rand_idx // TRIALS_PER_BLOCK) + 1
                         trial_in_block = (rand_idx % TRIALS_PER_BLOCK) + 1
                     
-                    writer.writerow([trial_num, block_num, trial_in_block, f"{bf:.2f}",
-                                     stim_dur, fix_dur, hz])
-
-            messagebox.showinfo("Success", f"Master CSV ({len(full_brightness_schedule)} trials) generated:\n{master_file}", parent=self.window)
+                    writer.writerow([
+                        trial_num, 
+                        block_num, 
+                        trial_in_block, 
+                        f"{bf:.2f}",
+                        stim_dur, 
+                        fix_dur, 
+                        hz
+                    ])
+            
+            messagebox.showinfo(
+                "Success", 
+                f"Master CSV ({len(full_brightness_schedule)} trials) generated:\n\n{master_file}", 
+                parent=self.window
+            )
             return True
+            
         except Exception as e:
             import traceback
             traceback.print_exc()
-            messagebox.showerror("CSV Save Error", f"Could not save {master_file}:\n\n{type(e).__name__}: {e}", parent=self.window)
+            messagebox.showerror(
+                "CSV Save Error", 
+                f"Could not save {master_file}:\n\n{type(e).__name__}: {e}", 
+                parent=self.window
+            )
             return False
 
     def process_generation(self):
-        if not self.validate_inputs(): return
-        os.makedirs(self.log_dir_base, exist_ok=True) 
+        """Main process to generate experiment files."""
+        # Validate inputs
+        if not self.validate_inputs():
+            return
+        
+        # Create base directory
+        try:
+            os.makedirs(self.log_dir_base, exist_ok=True)
+        except Exception as e:
+            messagebox.showerror(
+                "Directory Error", 
+                f"Could not create directory:\n{self.log_dir_base}\n\nError: {e}", 
+                parent=self.window
+            )
+            return
+        
+        # Get parameters
         params = self.get_current_params()
-        rand_bf = self.get_or_create_brightness_schedule(params["randomized_blocks"])
-        if rand_bf is None or rand_bf == "cancelled": return
-        full_schedule = BRIGHTNESS_LEVELS_BASE[:] + rand_bf 
-        expected_len = RAMP_UP_TRIALS_COUNT + (params["randomized_blocks"] * TRIALS_PER_BLOCK)
+        
+        # Get or create brightness schedule
+        rand_bf = self.get_or_create_brightness_schedule(int(params["randomized_blocks"]))
+        
+        if rand_bf is None or rand_bf == "cancelled":
+            return
+        
+        # Build full schedule (ramp-up + randomized)
+        full_schedule = BRIGHTNESS_LEVELS_BASE[:] + rand_bf
+        
+        # Verify length
+        expected_len = RAMP_UP_TRIALS_COUNT + (int(params["randomized_blocks"]) * TRIALS_PER_BLOCK)
         if len(full_schedule) != expected_len:
-            messagebox.showerror("Logic Error", f"Schedule length mismatch: got {len(full_schedule)}, expected {expected_len}.", parent=self.window); return
+            messagebox.showerror(
+                "Logic Error", 
+                f"Schedule length mismatch: got {len(full_schedule)}, expected {expected_len}.\n\n"
+                f"Please try again or report this issue.", 
+                parent=self.window
+            )
+            return
+        
+        # Generate the master trial CSV
         self.generate_master_trial_csv(full_schedule, params)
 
 # --- Experiment Runner Window (Fixed geometry) ---

@@ -342,7 +342,7 @@ class SetupGeneratorWindow:
         # ============================================================
         # SECTION 1: Experiment Identifier
         # ============================================================
-        id_frame = ttk.LabelFrame(main_frame, text="Experiment Identifier", padding=(10, 10))
+        id_frame = ttk.Labelframe(main_frame, text="Experiment Identifier", padding=(10, 10))
         id_frame.pack(fill=X, pady=(0, 10), ipady=5)
         
         # Use grid with explicit row/column configuration
@@ -375,7 +375,7 @@ class SetupGeneratorWindow:
         # ============================================================
         # SECTION 2: Base Output Directory
         # ============================================================
-        dir_frame = ttk.LabelFrame(main_frame, text="Base Output Directory", padding=(10, 10))
+        dir_frame = ttk.Labelframe(main_frame, text="Base Output Directory", padding=(10, 10))
         dir_frame.pack(fill=X, pady=(0, 10), ipady=5)
         
         dir_frame.columnconfigure(1, weight=1)
@@ -407,7 +407,7 @@ class SetupGeneratorWindow:
         # ============================================================
         # SECTION 3: Parameter Mode Selection
         # ============================================================
-        mode_frame = ttk.LabelFrame(main_frame, text="Parameter Mode", padding=(10, 10))
+        mode_frame = ttk.Labelframe(main_frame, text="Parameter Mode", padding=(10, 10))
         mode_frame.pack(fill=X, pady=(0, 10), ipady=5)
         
         radio_container = ttk.Frame(mode_frame)
@@ -436,7 +436,7 @@ class SetupGeneratorWindow:
         # ============================================================
         # SECTION 4: Custom Parameters
         # ============================================================
-        self.custom_params_frame = ttk.LabelFrame(
+        self.custom_params_frame = ttk.Labelframe(
             main_frame, 
             text="Custom Experiment Parameters", 
             padding=(10, 10)
@@ -950,7 +950,7 @@ class ExperimentRunnerWindow:
         lf_pad = (10,5) 
         lbl_font_size = 10
 
-        csv_frame = ttk.LabelFrame(main_frame, text="Experiment Setup File")
+        csv_frame = ttk.Labelframe(main_frame, text="Experiment Setup File")
         csv_frame.pack(fill=X, pady=(0, 10))
         ttk.Label(csv_frame, text="Master Trial CSV:", font=("",lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.master_csv_var = tk.StringVar()
@@ -959,7 +959,7 @@ class ExperimentRunnerWindow:
         ttk.Button(csv_frame, text="Browse...", command=self.browse_master_csv, style='outline.TButton').grid(row=0, column=2, padx=5, pady=5)
         csv_frame.columnconfigure(1, weight=1)
 
-        part_id_frame = ttk.LabelFrame(main_frame, text="Participant Information")
+        part_id_frame = ttk.Labelframe(main_frame, text="Participant Information")
         part_id_frame.pack(fill=X, pady=(0,10))
         ttk.Label(part_id_frame, text="Participant ID:", font=("",lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.participant_id_var = tk.StringVar()
@@ -967,7 +967,7 @@ class ExperimentRunnerWindow:
         self.part_id_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         part_id_frame.columnconfigure(1, weight=1)
 
-        img_frame = ttk.LabelFrame(main_frame, text="Stimulus Image Files")
+        img_frame = ttk.Labelframe(main_frame, text="Stimulus Image Files")
         img_frame.pack(fill=X, pady=(0, 10))
         self.img1_path_var, self.img2_path_var = tk.StringVar(), tk.StringVar()
         ttk.Label(img_frame, text="Image 1:", font=("",lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
@@ -978,7 +978,7 @@ class ExperimentRunnerWindow:
         ttk.Button(img_frame, text="Browse...", command=self.browse_image2, style='outline.TButton').grid(row=1, column=2, padx=5, pady=5)
         img_frame.columnconfigure(1, weight=1)
 
-        log_dir_frame = ttk.LabelFrame(main_frame, text="Participant Data Log Directory")
+        log_dir_frame = ttk.Labelframe(main_frame, text="Participant Data Log Directory")
         log_dir_frame.pack(fill=X, pady=(0, 15))
         ttk.Label(log_dir_frame, text="Directory:", font=("",lbl_font_size)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.log_dir_participant_var = tk.StringVar(value=self.config.log_dir_participant)

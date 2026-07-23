@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+mvast3/
+
+# Experiment output (generated at runtime)
+experiment_data/
+
+# OS
+.DS_Store

@@ -6,11 +6,24 @@ A desktop application for administering the M-VAST 3 (Michigan Visual Aversion S
 
 This repository contains the complete M-VAST 3 platform, including source code, image assets, and comprehensive documentation. M-VAST 3 is a research tool designed to present visual stimuli and collect subjective ratings from participants in controlled experimental settings.
 
+### Run modes
+
+- **Run Experiment** — the standard behavioral paradigm: ramp-up and randomized blocks of flickering checkerboards at varying brightness, each followed by unpleasantness and brightness ratings.
+- **Run Tonic fMRI** — a single continuous, constant-brightness flickering run (default ~6 minutes) with a central fixation cross and **no button responses**, intended to be acquired concurrently with fMRI. The run waits for the scanner trigger keystroke (default `5`) and logs the trigger time and stimulus onset/offset for fMRI alignment. The same tonic run is used on both the outpatient (GE Architect) and inpatient (Siemens Prisma) scanners; connect the presentation computer to the scanner display via HDMI — no E-Prime interface is required.
+
 ## Repository Contents
 
-- **`mvast3.py`** - Core Python application
+- **`mvast3.py`** - Application entry point (run this file)
+- **`config.py`** - Constants, paths, and run configuration objects
+- **`data.py`** - CSV data/score logging handlers
+- **`stimulus.py`** - Pygame stimulus presentation, rating scale, and helpers
+- **`runner.py`** - Experiment run orchestration (standard and tonic fMRI)
+- **`gui.py`** - Tkinter GUI windows (main menu and run setup)
 - **`mvast3_manual.html`** - Complete user guide (open in any web browser)
 - **`images/`** - Default images and sample stimuli
+
+> The application is split into focused modules, but you still run it the same
+> way — `python mvast3.py`. Keep all the `.py` files together in the same folder.
 
 ## Installation
 
@@ -56,9 +69,9 @@ You need to tell your computer where to find the M-VAST 3 files.
 - On Windows: type `dir` and press Enter
 - On Mac: type `ls` and press Enter
 
-You should see these three items listed:
+You should see these items listed:
 - `images`
-- `mvast3.py`
+- `mvast3.py` (and the other `.py` files: `config.py`, `data.py`, `stimulus.py`, `runner.py`, `gui.py`)
 - `mvast3_manual.html`
 
 If you don't see these files, you're in the wrong folder. Try navigating to where you actually saved the extracted files.
@@ -160,7 +173,7 @@ The M-VAST 3 application window should now open!
 - Navigate to the correct folder using `cd` command
 
 **Still having trouble?**
-- Double-check that when you type `dir` (Windows) or `ls` (Mac), you see the three items: `images`, `mvast3.py`, and `mvast3_manual.html`
+- Double-check that when you type `dir` (Windows) or `ls` (Mac), you see `images`, `mvast3.py` (plus the other `.py` files), and `mvast3_manual.html`
 - Make sure you're in the mvast3-main folder
 
 ## Getting Help

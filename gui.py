@@ -90,12 +90,16 @@ class MVAST3Application:
             ttk.Frame(main_frame).pack(side=TOP, fill=BOTH, expand=YES)
 
             # --- FOOTER SECTION ---
-            footer_frame = ttk.Frame(main_frame) 
-            footer_frame.pack(side=BOTTOM, pady=15, padx=0, fill=X)
-            
+            footer_frame = ttk.Frame(main_frame)
+            footer_frame.pack(side=BOTTOM, pady=(5, 8), padx=0, fill=X)
+
+            # Ensure footer button text is centered within the button box
+            self.root.style.configure('danger.TButton', anchor=CENTER)
+            self.root.style.configure('secondary.TButton', anchor=CENTER)
+
             self.help_btn = ttk.Button(footer_frame, text="Help / How to Use",
                                   command=self.show_help,
-                                  style='danger.TButton') 
+                                  style='danger.TButton', padding=(14, 4))
             self.help_btn.pack(side=LEFT)
 
             self.signature_label = ttk.Label(footer_frame, text="Brock Pluimer (University of California, Irvine) & Steven Harte (University of Michigan)",
@@ -106,9 +110,9 @@ class MVAST3Application:
                                            font=("Helvetica", 10), foreground="grey50")
             self.version_label.pack(side=RIGHT, padx=(10, 0))
             
-            self.exit_btn = ttk.Button(footer_frame, text="Exit", 
+            self.exit_btn = ttk.Button(footer_frame, text="Exit",
                                  command=self.root.quit,
-                                 style='secondary.TButton')
+                                 style='secondary.TButton', padding=(14, 4))
             self.exit_btn.pack(side=RIGHT)
 
 
@@ -263,8 +267,8 @@ class SetupGeneratorWindow:
         self.window.title("M-VAST 3 - Generate Experiment Setup")
         
         # Set geometry BEFORE creating widgets
-        self.window.geometry("700x750")
-        self.window.minsize(650, 700)
+        self.window.geometry("700x900")
+        self.window.minsize(650, 780)
         
         # Force the window to fully initialize before adding content
         self.window.update_idletasks()
@@ -507,35 +511,36 @@ class SetupGeneratorWindow:
         ).grid(row=3, column=2, padx=(10, 5), pady=8, sticky="w")
         
         self.custom_params_frame.update_idletasks()
-        
+
         # ============================================================
-        # SECTION 5: Info Label
-        # ============================================================
-        info_container = ttk.Frame(main_frame, padding=(5, 10))
-        info_container.pack(fill=X, pady=(5, 5))
-        
-        self.info_label = ttk.Label(
-            info_container, 
-            text="", 
-            justify="left", 
-            wraplength=600, 
-            font=small_font
-        )
-        self.info_label.pack(fill=X, anchor="w")
-        
-        # ============================================================
-        # SECTION 6: Generate Button
+        # SECTION 6: Generate Button (pinned to bottom so it is always
+        # visible regardless of window height)
         # ============================================================
         btn_container = ttk.Frame(main_frame, padding=(0, 10))
-        btn_container.pack(fill=X, pady=(10, 5))
-        
+        btn_container.pack(side=BOTTOM, fill=X, pady=(10, 5))
+
         self.generate_button = ttk.Button(
-            btn_container, 
-            text="Generate Experiment Files", 
-            command=self.process_generation, 
+            btn_container,
+            text="Generate Experiment Files",
+            command=self.process_generation,
             style='success.TButton'
         )
         self.generate_button.pack(pady=10, ipadx=20, ipady=8)
+
+        # ============================================================
+        # SECTION 5: Info Label (pinned just above the button)
+        # ============================================================
+        info_container = ttk.Frame(main_frame, padding=(5, 10))
+        info_container.pack(side=BOTTOM, fill=X, pady=(5, 5))
+
+        self.info_label = ttk.Label(
+            info_container,
+            text="",
+            justify="left",
+            wraplength=600,
+            font=small_font
+        )
+        self.info_label.pack(fill=X, anchor="w")
         
         # ============================================================
         # Final Setup

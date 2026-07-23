@@ -17,7 +17,7 @@ def resource_path(relative_path):
     return full_path
     
 # --- Application Constants ---
-APP_VERSION = "v1.0_2025_06_18"
+APP_VERSION = "v1.1_2026_07_23"
 
 DEFAULT_LOG_DIR_BASE_NAME = "experiment_data" 
 DEFAULT_LOG_DIR_PARTICIPANT_NAME = "participant_runs" 

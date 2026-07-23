@@ -233,8 +233,8 @@ RUN TONIC fMRI (concurrent MRI acquisition):
     *   Trigger time and stimulus onset/offset are logged for fMRI alignment.
     *   Press ESC to abort at any time.
         """
-        messagebox.showinfo("How to Use - M-VAST 3 Application", help_text, parent=self.root)
-        
+        self._show_help_dialog(help_text)
+
         # Crash-Proof Logic for Opening the Manual in a packaged app
         try:
             internal_manual_path = resource_path(HELP_FILE_NAME)
@@ -252,7 +252,45 @@ RUN TONIC fMRI (concurrent MRI acquisition):
                                    "Could not automatically open the manual.\n"
                                    f"Please look for {HELP_FILE_NAME} in the application folder.",
                                    parent=self.root)
-        
+
+    def _show_help_dialog(self, help_text):
+        """Show the help text in a scrollable window with an always-visible
+        Close button (the native messagebox can push its OK button off-screen
+        when the text is very long)."""
+        dialog = ttk.Toplevel(self.root)
+        dialog.title("How to Use - M-VAST 3 Application")
+        dialog.geometry("720x640")
+        dialog.minsize(500, 400)
+        dialog.transient(self.root)
+
+        container = ttk.Frame(dialog, padding=10)
+        container.pack(fill=BOTH, expand=YES)
+
+        # Close button pinned to the bottom so it is always reachable
+        btn_frame = ttk.Frame(container)
+        btn_frame.pack(side=BOTTOM, fill=X, pady=(10, 0))
+        close_btn = ttk.Button(btn_frame, text="Close", command=dialog.destroy,
+                               style='secondary.TButton', padding=(20, 6))
+        close_btn.pack()
+
+        # Scrollable text area for the help content
+        text_frame = ttk.Frame(container)
+        text_frame.pack(side=TOP, fill=BOTH, expand=YES)
+        scrollbar = ttk.Scrollbar(text_frame, orient="vertical")
+        scrollbar.pack(side=RIGHT, fill=Y)
+        text_widget = tk.Text(text_frame, wrap="word", yscrollcommand=scrollbar.set,
+                              font=("TkDefaultFont", 11), relief="flat",
+                              padx=10, pady=10, borderwidth=0)
+        text_widget.pack(side=LEFT, fill=BOTH, expand=YES)
+        scrollbar.config(command=text_widget.yview)
+        text_widget.insert("1.0", help_text.strip())
+        text_widget.config(state="disabled")
+
+        dialog.bind("<Escape>", lambda e: dialog.destroy())
+        dialog.grab_set()
+        dialog.focus_force()
+        close_btn.focus_set()
+
     def open_setup_generator(self): SetupGeneratorWindow(self.root, self)
     def open_experiment_runner(self): ExperimentRunnerWindow(self.root, self)
     def open_tonic_runner(self): TonicRunnerWindow(self.root, self)

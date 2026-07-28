@@ -127,7 +127,8 @@ def execute_tonic_run(config):
         trigger_wall, trigger_perf = trig
         print(f"Scanner trigger received at {trigger_wall}. Starting tonic stimulus.")
 
-        completed = run_tonic_stimulus(screen, board1, board2, config.duration, config.hz, config.brightness)
+        completed = run_tonic_stimulus(screen, board1, board2, config.duration, config.hz,
+                                       config.brightness, show_fixation=config.show_fixation)
         stim_end_perf = time.perf_counter()
 
         if not completed:

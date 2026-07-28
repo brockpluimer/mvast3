@@ -117,6 +117,7 @@ class TonicDataHandler:
             ['Flicker_Hz', f"{self.config.hz:.2f}"],
             ['Requested_Duration_s', f"{self.config.duration:.2f}"],
             ['Trigger_Key', self.config.trigger_key],
+            ['Fixation_Cross_Overlay', 'yes' if getattr(self.config, 'show_fixation', False) else 'no'],
             ['Run_Status', status],
             [],
             ['Event', 'Wall_Clock', 'Seconds_Relative_To_Trigger'],

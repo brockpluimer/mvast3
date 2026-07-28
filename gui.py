@@ -20,7 +20,7 @@ from config import (
     DEFAULT_STIMULUS_DURATION, DEFAULT_FIXATION_DURATION,
     DEFAULT_CHECKERBOARD_HZ, DEFAULT_RANDOMIZED_BLOCKS_COUNT,
     DEFAULT_TONIC_DURATION, DEFAULT_TONIC_BRIGHTNESS, DEFAULT_TONIC_HZ,
-    DEFAULT_TRIGGER_KEY,
+    DEFAULT_TRIGGER_KEY, DEFAULT_TONIC_SHOW_FIXATION,
     BRIGHTNESS_LEVELS_BASE, RAMP_UP_TRIALS_COUNT, TRIALS_PER_BLOCK,
     resource_path, RunConfig, TonicRunConfig,
 )
@@ -225,6 +225,9 @@ RUN TONIC fMRI (concurrent MRI acquisition):
     *   No setup CSV is needed. Enter a 'Participant ID', pick the two
         checkerboard images, and set the constant brightness, flicker Hz,
         duration (~6 min), and scanner trigger key (default '5').
+    *   "Draw fixation cross (+)" is OFF by default because the acheck_by
+        images already have a cross built in. Turn it on only for image sets
+        (e.g., the strobe images) that do not include one.
     *   Click "Start Tonic Run". A "waiting for scanner" screen appears.
     *   Start the fMRI sequence. When the scanner sends its trigger pulse
         (delivered as the trigger keystroke), the flickering checkerboard
@@ -1135,6 +1138,7 @@ class TonicRunnerWindow:
         self.hz_var = tk.DoubleVar(value=DEFAULT_TONIC_HZ)
         self.duration_var = tk.DoubleVar(value=DEFAULT_TONIC_DURATION)
         self.trigger_key_var = tk.StringVar(value=DEFAULT_TRIGGER_KEY)
+        self.show_fixation_var = tk.BooleanVar(value=DEFAULT_TONIC_SHOW_FIXATION)
         self.log_dir_participant_var = tk.StringVar(value=self.config.log_dir_participant)
 
         # --- Participant / scanner ---
@@ -1185,6 +1189,10 @@ class TonicRunnerWindow:
         ttk.Entry(param_frame, textvariable=self.trigger_key_var, width=10, font=("", lbl_font_size)).grid(row=3, column=1, padx=5, pady=6, sticky="w")
         ttk.Label(param_frame, text="(keystroke the scanner sends at each pulse; can also be pressed manually)", font=("", 9), foreground="gray").grid(row=3, column=2, padx=5, pady=6, sticky="w")
 
+        ttk.Checkbutton(param_frame, text="Draw fixation cross (+)", variable=self.show_fixation_var
+                        ).grid(row=4, column=0, columnspan=2, padx=5, pady=6, sticky="w")
+        ttk.Label(param_frame, text="(leave off for image sets that already contain a cross, e.g. acheck_by)", font=("", 9), foreground="gray").grid(row=4, column=2, padx=5, pady=6, sticky="w")
+
         # --- Log directory ---
         log_dir_frame = ttk.Labelframe(main_frame, text="Participant Data Log Directory")
         log_dir_frame.pack(fill=X, pady=(0, 15))
@@ -1226,6 +1234,7 @@ class TonicRunnerWindow:
         c.image2_path = self.img2_path_var.get()
         c.log_dir_participant = self.log_dir_participant_var.get()
         c.trigger_key = self.trigger_key_var.get().strip()
+        c.show_fixation = bool(self.show_fixation_var.get())
 
         if not c.participant_id:
             messagebox.showerror("Input Error", "Participant ID required.", parent=self.window); return False

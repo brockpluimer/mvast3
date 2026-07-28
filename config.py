@@ -17,7 +17,7 @@ def resource_path(relative_path):
     return full_path
     
 # --- Application Constants ---
-APP_VERSION = "v1.1_2026_07_23"
+APP_VERSION = "v1.1_2026_07_28"
 
 DEFAULT_LOG_DIR_BASE_NAME = "experiment_data" 
 DEFAULT_LOG_DIR_PARTICIPANT_NAME = "participant_runs" 
@@ -47,6 +47,7 @@ DEFAULT_TONIC_DURATION = 360.0        # seconds (~6 minutes)
 DEFAULT_TONIC_BRIGHTNESS = 1.0        # constant brightness (1.0 = full)
 DEFAULT_TONIC_HZ = DEFAULT_CHECKERBOARD_HZ
 DEFAULT_TRIGGER_KEY = "5"             # scanner TTL pulse is delivered as this keystroke
+DEFAULT_TONIC_SHOW_FIXATION = False   # the acheck_by images already contain a cross; only needed for sets that don't
 
 BRIGHTNESS_LEVELS_BASE = [0.1, 0.2, 0.4, 0.6, 0.8, 1.0]
 RAMP_UP_TRIALS_COUNT = len(BRIGHTNESS_LEVELS_BASE)
@@ -80,5 +81,6 @@ class TonicRunConfig:
         self.hz = DEFAULT_TONIC_HZ
         self.duration = DEFAULT_TONIC_DURATION
         self.trigger_key = DEFAULT_TRIGGER_KEY
+        self.show_fixation = DEFAULT_TONIC_SHOW_FIXATION
         self.log_dir_participant = DEFAULT_LOG_DIR_PARTICIPANT
 

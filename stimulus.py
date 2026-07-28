@@ -293,19 +293,23 @@ def wait_for_scanner_trigger(screen, trigger_key):
                 return datetime.now(), time.perf_counter()
         pygame.time.wait(2)
 
-def run_tonic_stimulus(screen, board1, board2, duration, hz, brightness_factor, escape_quits=True):
-    """Continuous constant-brightness flicker for `duration` seconds with a
-    central fixation cross. Mirrors run_alternating_stimulus timing but adds
-    the fixation cross and is intended to run for the full ~6-minute run.
+def run_tonic_stimulus(screen, board1, board2, duration, hz, brightness_factor,
+                       show_fixation=False, escape_quits=True):
+    """Continuous constant-brightness flicker for `duration` seconds, intended
+    to run for the full ~6-minute run. Mirrors run_alternating_stimulus timing.
+    A central fixation cross is overlaid only when `show_fixation` is True --
+    image sets such as acheck_by already have a cross drawn into the images.
     Returns True if it ran to completion, False if aborted."""
     pygame.mouse.set_visible(False)
 
-    pg_sf = max(0.5, min(3.0, screen.get_height() / PYGAME_REFERENCE_SCREEN_HEIGHT))
-    cross_font_size = int(72 * pg_sf)
-    try: cross_font = pygame.font.Font(None, cross_font_size)
-    except: cross_font = pygame.font.SysFont("arial", cross_font_size)
-    cross_surf = cross_font.render('+', True, WHITE)
-    cross_rect = cross_surf.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    cross_surf = cross_rect = None
+    if show_fixation:
+        pg_sf = max(0.5, min(3.0, screen.get_height() / PYGAME_REFERENCE_SCREEN_HEIGHT))
+        cross_font_size = int(72 * pg_sf)
+        try: cross_font = pygame.font.Font(None, cross_font_size)
+        except: cross_font = pygame.font.SysFont("arial", cross_font_size)
+        cross_surf = cross_font.render('+', True, WHITE)
+        cross_rect = cross_surf.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
 
     b_b1 = adjust_surface_brightness(board1, brightness_factor)
     b_b2 = adjust_surface_brightness(board2, brightness_factor)
@@ -315,7 +319,8 @@ def run_tonic_stimulus(screen, board1, board2, duration, hz, brightness_factor, 
 
     # Static (no flicker) case: draw once, then hold.
     if hz <= 0:
-        screen.fill(BLACK); screen.blit(b_b1, (0, 0)); screen.blit(cross_surf, cross_rect)
+        screen.fill(BLACK); screen.blit(b_b1, (0, 0))
+        if cross_surf: screen.blit(cross_surf, cross_rect)
         pygame.display.flip()
         while time.perf_counter() < end_t:
             for ev in pygame.event.get():
@@ -335,7 +340,7 @@ def run_tonic_stimulus(screen, board1, board2, duration, hz, brightness_factor, 
         if now_t >= last_flip_t + frame_dur:
             screen.fill(BLACK)
             screen.blit(b_b1 if curr_b1 else b_b2, (0, 0))
-            screen.blit(cross_surf, cross_rect)
+            if cross_surf: screen.blit(cross_surf, cross_rect)
             pygame.display.flip()
             curr_b1 = not curr_b1
             last_flip_t += frame_dur

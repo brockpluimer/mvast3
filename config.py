@@ -12,27 +12,28 @@ def resource_path(relative_path):
     except NameError:
         base_path = os.path.abspath(".")
 
-    full_path = os.path.join(base_path, relative_path)
-    print(f"DEBUG: Trying to load resource from: {full_path}")
-    return full_path
+    return os.path.join(base_path, relative_path)
     
 # --- Application Constants ---
-APP_VERSION = "v1.1_2026_07_28"
+APP_VERSION = "v2.0_2026_10_23"
 
 DEFAULT_LOG_DIR_BASE_NAME = "experiment_data" 
 DEFAULT_LOG_DIR_PARTICIPANT_NAME = "participant_runs" 
 
 if getattr(sys, 'frozen', False): 
     APP_BASE_PATH = os.path.dirname(sys.executable)
-else: 
-    APP_BASE_PATH = os.path.abspath(".") 
+else:
+    # Anchor to the folder holding the .py files, not the launch directory,
+    # so the default data folder is the same however the app is started.
+    APP_BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 DEFAULT_LOG_DIR_BASE = os.path.join(APP_BASE_PATH, DEFAULT_LOG_DIR_BASE_NAME)
 DEFAULT_LOG_DIR_PARTICIPANT = os.path.join(DEFAULT_LOG_DIR_BASE, DEFAULT_LOG_DIR_PARTICIPANT_NAME)
 
 SCHEDULES_SUBDIR = "randomization_schedules"
 SETUPS_SUBDIR = "experiment_setups"
-HELP_FILE_NAME = "mvast3_manual.html" 
+HELP_FILE_NAME = "mvast3_manual.html"
+SETTINGS_FILE = os.path.join(APP_BASE_PATH, "mvast3_settings.json")  # remembered GUI settings
 
 DEFAULT_STIMULUS_DURATION = 10.0
 DEFAULT_FIXATION_DURATION = 8.0
@@ -48,6 +49,30 @@ DEFAULT_TONIC_BRIGHTNESS = 1.0        # constant brightness (1.0 = full)
 DEFAULT_TONIC_HZ = DEFAULT_CHECKERBOARD_HZ
 DEFAULT_TRIGGER_KEY = "5"             # scanner TTL pulse is delivered as this keystroke
 DEFAULT_TONIC_SHOW_FIXATION = False   # the acheck_by images already contain a cross; only needed for sets that don't
+
+# --- Protocol display / stimulus defaults ---
+EXPECTED_DISPLAY_SIZE = (1600, 1200)  # EIZO protocol resolution; checked before every run
+CANONICAL_IMAGE1 = os.path.join("images", "acheck_by.png")   # blue/yellow pair (Steve: the standard)
+CANONICAL_IMAGE2 = os.path.join("images", "acheck_by_.png")
+
+# --- Trial order ---
+# One fixed pseudo-random order for every participant (protocol decision).
+# The standard order is regenerated deterministically from this seed, with
+# bright trials (>= BRIGHT_THRESHOLD) never placed back-to-back.
+CANONICAL_ORDER_SEED = 16
+BRIGHT_THRESHOLD = 0.8
+
+# --- Master CSV range limits (checked on load) ---
+CSV_LIMITS = {
+    'brightness_factor': (0.0, 1.0),     # exclusive low, inclusive high
+    'stimulus_duration': (0.0, 300.0),
+    'fixation_duration': (0.0, 300.0),
+    'checkerboard_hz': (0.0, 60.0),      # 0 = static image
+}
+
+# --- Flicker timing QC ---
+INTERVAL_OVER_FACTOR = 1.5   # interval > 1.5x nominal half-period = visible stall
+INTERVAL_UNDER_FACTOR = 0.5  # interval < 0.5x nominal = catch-up flip too brief to see
 
 BRIGHTNESS_LEVELS_BASE = [0.1, 0.2, 0.4, 0.6, 0.8, 1.0]
 RAMP_UP_TRIALS_COUNT = len(BRIGHTNESS_LEVELS_BASE)
@@ -70,6 +95,8 @@ class RunConfig:
         self.participant_id = ""
         self.log_dir_participant = DEFAULT_LOG_DIR_PARTICIPANT
         self.trials_data = []
+        self.display_index = 0
+        self.display_mismatch_accepted = False  # operator chose "Continue Anyway"
 
 class TonicRunConfig:
     def __init__(self):
@@ -83,4 +110,6 @@ class TonicRunConfig:
         self.trigger_key = DEFAULT_TRIGGER_KEY
         self.show_fixation = DEFAULT_TONIC_SHOW_FIXATION
         self.log_dir_participant = DEFAULT_LOG_DIR_PARTICIPANT
+        self.display_index = 0
+        self.display_mismatch_accepted = False
 

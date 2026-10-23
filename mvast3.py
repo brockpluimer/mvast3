@@ -8,6 +8,7 @@ The codebase is organized into focused modules:
   stimulus.py  - pygame stimulus presentation and helpers
   runner.py    - experiment run orchestration (standard and tonic fMRI)
   gui.py       - Tkinter GUI windows
+  gui_widgets.py - shared GUI widgets, dialogs, and pre-flight checks
   mvast3.py    - this entry point
 """
 

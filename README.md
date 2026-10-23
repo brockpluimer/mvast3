@@ -11,6 +11,18 @@ This repository contains the complete M-VAST 3 platform, including source code, 
 - **Run Experiment** — the standard behavioral paradigm: ramp-up and randomized blocks of flickering checkerboards at varying brightness, each followed by unpleasantness and brightness ratings.
 - **Run Tonic fMRI** — a single continuous, constant-brightness flickering run (default ~6 minutes) with a central fixation cross and **no button responses**, intended to be acquired concurrently with fMRI. The run waits for the scanner trigger keystroke (default `5`) and logs the trigger time and stimulus onset/offset for fMRI alignment. The same tonic run is used on both the outpatient (GE Architect) and inpatient (Siemens Prisma) scanners; connect the presentation computer to the scanner display via HDMI — no E-Prime interface is required.
 
+### What's new in v2
+
+- **Run integrity:** every data file ends with `Run_Status` (`completed` / `aborted` / `error`) and `Trials_Completed`. A failed write (e.g. a USB drive dropping) stops the run with `error`. Closing the stimulus window returns to the menu instead of quitting the app.
+- **Frame-accurate flicker:** image changes follow a fixed time grid aligned to the display's frames, with vsync requested. A system stall shows up as one long interval, never as a burst of catch-up flips. Brightness levels are prepared before the first trial.
+- **Timing and provenance logging:** per-trial onset/offset, flip-interval statistics and focus-loss counts. The header records the master CSV's path and SHA-256, image hashes, display size, refresh rate (OS-reported and measured) and the result of the 1600×1200 display check.
+- **Tonic fMRI:** the intro screen continues only on the operator's SPACE bar, so scanner pulses can't use up a volume. Onset is the measured first frame. The log is written as soon as the trigger arrives, and every scanner pulse during the run is logged.
+- **Operator GUI:** a display picker (with Identify), pre-flight checks, a warning when a participant ID already has data, the canonical image pair by default with thumbnails, remembered settings, a post-run summary, Test Trigger, and a standard fixed trial order with bright trials spaced apart.
+
+**Output format (additive only):** existing rows and columns keep their names and order. New header rows push the trial table down 11 rows, so analysis scripts should find it by its header line (`Trial_Number_Overall,...`). New columns are appended to the right. Timing values are software timestamps taken after each flip, not photon times; check each rig once with a photodiode, and measure display luminance per brightness level with a photometer. See `mvast3_manual.html` §4 for every field.
+
+**Display setup:** the protocol expects the participant display at **1600×1200**. On Windows, set that display's scaling to 100%.
+
 ## Repository Contents
 
 - **`mvast3.py`** - Application entry point (run this file)
@@ -18,7 +30,8 @@ This repository contains the complete M-VAST 3 platform, including source code, 
 - **`data.py`** - CSV data/score logging handlers
 - **`stimulus.py`** - Pygame stimulus presentation, rating scale, and helpers
 - **`runner.py`** - Experiment run orchestration (standard and tonic fMRI)
-- **`gui.py`** - Tkinter GUI windows (main menu and run setup)
+- **`gui.py`** - Tkinter GUI windows (main menu, setup generator, run windows)
+- **`gui_widgets.py`** - Shared GUI pieces (display picker, pre-flight checks, run summary, remembered settings)
 - **`mvast3_manual.html`** - Complete user guide (open in any web browser)
 - **`images/`** - Default images and sample stimuli
 
@@ -71,7 +84,7 @@ You need to tell your computer where to find the M-VAST 3 files.
 
 You should see these items listed:
 - `images`
-- `mvast3.py` (and the other `.py` files: `config.py`, `data.py`, `stimulus.py`, `runner.py`, `gui.py`)
+- `mvast3.py` (and the other `.py` files: `config.py`, `data.py`, `stimulus.py`, `runner.py`, `gui.py`, `gui_widgets.py`)
 - `mvast3_manual.html`
 
 If you don't see these files, you're in the wrong folder. Try navigating to where you actually saved the extracted files.
@@ -157,6 +170,23 @@ The M-VAST 3 application window should now open!
    python mvast3.py
    ```
 
+## Running the Tests
+
+The `tests/` folder holds an automated test suite (about 200 tests, ~20 seconds). It runs headless: no window opens.
+
+```bash
+python -m pip install pytest
+python -m pytest
+```
+
+It covers:
+- flicker timing, using a simulated clock with injected stalls, vsync on and off, ESC, and scanner pulses;
+- the output files, checked against v1's `data.py` from git so every v1 row and column stays in place;
+- every way a run can end, in both run modes;
+- master-CSV validation, the pre-flight checks, and the GUI windows (skipped where no display is available).
+
+For a longer randomized timing run: `MVAST_STRESS_CASES=5000 MVAST_STRESS_SEED=7 python -m pytest tests/test_flicker.py -k stress`.
+
 ## Troubleshooting
 
 **"Python is not recognized" error:**
@@ -185,7 +215,7 @@ For questions about the software or M-VAST 3 methodology, please contact:
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.8+ (3.11+ recommended on Windows for finer-grained timing)
 - Dependencies: pygame, pillow, numpy, ttkbootstrap
 
 ## Citation

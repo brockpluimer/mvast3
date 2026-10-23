@@ -11,3 +11,6 @@ experiment_data/
 
 # OS
 .DS_Store
+
+# Remembered GUI settings (per machine)
+mvast3_settings.json

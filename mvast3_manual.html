@@ -172,13 +172,13 @@
         <h1>M-VAST 3 Application Manual</h1>
         
         <div class="version-info">
-            <p><strong>Version:</strong> 1.0_2025_06_18</p>
+            <p><strong>Version:</strong> 2.0_2026_10_23</p>
             <p><strong>Authors:</strong> Brock Pluimer (University of California, Irvine) &amp; Steven Harte (University of Michigan)</p>
         </div>
 
         <div class="installation-section">
             <h2>Installation & Setup</h2>
-            <p>In order to run this application, you need <strong>Python 3</strong> installed on your system. We also recommend setting your device to maximum brightness before starting the experiment.</p>
+            <p>In order to run this application, you need <strong>Python 3</strong> installed on your system (3.11 or newer recommended on Windows, for finer-grained timing). We also recommend setting your device to maximum brightness before starting the experiment.</p>
             
             <h3>Required Packages</h3>
             <p>Install the required packages by running the following command in your terminal:</p>
@@ -201,7 +201,7 @@
         
         <ol>
             <li><strong>Generate</strong> standardized and randomized experiment protocols.</li>
-            <li><strong>Run</strong> experiments with participants in a controlled, full-screen environment.</li>
+            <li><strong>Run</strong> experiments with participants in a controlled, full-screen environment, either the standard rated paradigm or the continuous <strong>tonic fMRI</strong> run synced to the MRI scanner trigger.</li>
             <li><strong>Collect and Log</strong> participant ratings for discomfort and brightness in a structured CSV format.</li>
         </ol>
         
@@ -224,6 +224,12 @@
                     <ul>
                         <li><strong>Experiment ID:</strong> A unique identifier for your study or condition (e.g., <code>Study1_HighAnxietyGroup</code>). This ID determines the randomization and naming of your setup files. <strong>Do not use special characters</strong> like <code>/\:*?"&lt;&gt;|</code>.</li>
                         <li><strong>Base Output Directory:</strong> The main folder where all experiment-related files (setups, schedules, and later, participant data) will be stored. It defaults to an <code>experiment_data</code> folder next to the application. It is recommended to keep this default.</li>
+                        <li><strong>Trial Order:</strong>
+                            <ul>
+                                <li><strong>Standard fixed order (recommended):</strong> every participant gets the same pseudo-random order, and bright trials (brightness 0.8 or higher) are never back-to-back, including across block boundaries. The order is shown as a bar preview.</li>
+                                <li><strong>Generate a new order:</strong> advanced; choose a seed and whether to space out bright trials. The same seed always gives the same order.</li>
+                            </ul>
+                        </li>
                         <li><strong>Parameter Mode:</strong>
                             <ul>
                                 <li><strong>Default Parameters:</strong> Uses a standard, pre-defined set of parameters for trial timing and stimulus frequency. This is recommended for ensuring consistency across studies.</li>
@@ -237,9 +243,10 @@
             
             <p>This action creates two important files inside your "Base Output Directory":</p>
             <ul>
-                <li><span class="filename">..._brightness_schedule.csv</span>: A CSV file containing the randomized sequence of brightness levels for the main trials. If you re-use an Experiment ID, the software will load the same schedule to ensure reproducibility.</li>
+                <li><span class="filename">..._brightness_schedule.csv</span>: A CSV file containing the randomized sequence of brightness levels for the main trials, kept for your records. The order is reproducible from its seed.</li>
                 <li><span class="filename">..._master_trials.csv</span>: The master plan for the entire experiment. This CSV lists every single trial in order, detailing its parameters (brightness, duration, block number, etc.). <strong>This is the file you will load in the next stage.</strong></li>
             </ul>
+            <p>If a master trial CSV with the same Experiment ID already exists, you are asked whether to keep it, save the new one under a new name (e.g. <code>Study1_v2</code>), or overwrite it. Overwriting changes the file's SHA-256, so it would no longer match the hash logged by participants who already ran.</p>
         </div>
 
         <div class="workflow-stage">
@@ -251,20 +258,32 @@
                 <li>From the main menu, click <strong>"Run Experiment"</strong>.</li>
                 <li>Fill in the following fields in the "Run Experiment" window:
                     <ul>
-                        <li><strong>Master Trial CSV:</strong> Click "Browse..." and select the <span class="filename">..._master_trials.csv</span> file you created in Stage 1.</li>
-                        <li><strong>Participant ID:</strong> Enter a unique identifier for the participant (e.g., <code>P001</code>, <code>Subj_12</code>). <strong>Do not use special characters.</strong></li>
-                        <li><strong>Stimulus Image Files (Image 1 &amp; Image 2):</strong> Browse for the two images that will be alternated to create the flickering checkerboard stimulus. Previous experiments have used acheck_by.png and acheck_by_.png</li>
+                        <li><strong>Master Trial CSV:</strong> Click "Browse..." and select the <span class="filename">..._master_trials.csv</span> file you created in Stage 1. It is checked straight away: the number of trials, whether every value is in range, the estimated session length, and a short SHA-256.</li>
+                        <li><strong>Participant ID:</strong> Enter a unique identifier for the participant (e.g., <code>P001</code>, <code>Subj_12</code>). <strong>Do not use special characters.</strong> If data for this ID already exists in the log folder you are warned (with that file's run status); nothing is ever overwritten.</li>
+                        <li><strong>Stimulus Image Files (Image 1 &amp; Image 2):</strong> These default to the canonical blue/yellow pair, <code>acheck_by.png</code> and <code>acheck_by_.png</code>. Thumbnails are shown, and each file's SHA-256 is logged.</li>
+                        <li><strong>Display:</strong> Choose the screen the participant sees. <strong>Identify</strong> shows each display's number on that screen for 2 seconds. In Extend mode with the laptop as the main display, pick the EIZO here.</li>
                         <li><strong>Participant Data Log Directory:</strong> Choose the folder where this specific participant's data will be saved. It defaults to a <code>participant_runs</code> subfolder within your base directory.</li>
                     </ul>
                 </li>
-                <li>Click the <strong>"Start Experiment"</strong> button.</li>
+                <li>Review the <strong>Pre-flight Check</strong>: display resolution (the protocol expects 1600×1200), refresh rate and frames per flicker half-cycle (7.5 Hz is exactly 4 frames at 60 Hz), free disk space, images, and any existing data for the participant.</li>
+                <li>Click the <strong>"Start Experiment"</strong> button. If the chosen display is not 1600×1200 you are asked whether to continue; the answer is recorded in <code>Display_Check</code>.</li>
             </ol>
-            
-            <p>The control panel will disappear, and the full-screen experiment will begin on the primary monitor.</p>
+            <p>The control panel will disappear, and the full-screen experiment will begin on the chosen display. When the run ends, a <strong>Run Summary</strong> shows the run status, trials completed, timing checks (any trial with a stall or catch-up flip is listed), whether the window lost focus, and the files written, with an Open Folder button.</p>
+            <p>Settings (CSV, images, display, folder) are remembered for the next session unless you untick <em>Remember these settings</em>. They are stored in <code>mvast3_settings.json</code> next to the application.</p>
+            <div class="highlight"><strong>Windows display scaling:</strong> set the participant display's scaling to 100%. At other settings the display reports a smaller size (e.g. 1280×960 at 125%) and the stimulus is scaled.</div>
         </div>
 
+        <div class="workflow-stage">
+            <h3 class="stage-title">Tonic fMRI Run</h3>
+            <p>Use <strong>"Run Tonic fMRI"</strong> instead of "Run Experiment" for the continuous, constant-brightness run acquired during fMRI. No master CSV is needed and no ratings are collected.</p>
+            <ol>
+                <li>Enter the Participant ID and scanner/site, check the images (canonical pair by default), and set brightness, flicker frequency (7.5 Hz is the reference), duration (default 360 s) and the trigger key (default <code>5</code>). The hint next to the frequency shows how many display frames each half-cycle lasts.</li>
+                <li>Click <strong>Test Trigger…</strong> and start a scan (or press the key): it listens for 10 seconds and reports how many pulses arrived and the interval between them (the TR).</li>
+                <li>Choose the display and click <strong>Start Tonic Run</strong>. On the intro screen the <strong>operator presses SPACE</strong>. Trigger pulses are ignored there, so a scanner that is already running can't use up a volume.</li>
+                <li>The "waiting for scanner" screen appears. The first trigger pulse starts the flicker. The log file is written immediately (<code>Run_Status=running</code>) and rewritten when the run ends.</li>
+            </ol>
+        </div>
         <hr>
-
         <h2>3. The Participant's Experience</h2>
         
         <p>The participant interacts with a simple, full-screen interface.</p>
@@ -283,7 +302,7 @@
         </ol>
         
         <div class="highlight">
-            <strong>Exiting the Experiment:</strong> The participant or researcher can press the <strong><code>ESC</code></strong> key at any time to stop the experiment. All data collected up to that point will be saved.
+            <strong>Exiting the Experiment:</strong> The participant or researcher can press the <strong><code>ESC</code></strong> key at any time to stop the experiment. All data collected up to that point will be saved and the file records <code>Run_Status = aborted</code>. Closing the stimulus window (e.g. Alt+F4) is treated the same way and returns you to the menu.
         </div>
 
         <hr>
@@ -291,6 +310,7 @@
         <h2>4. Output Data Format</h2>
         
         <p>For each participant run, two files are generated in the specified "Participant Data Log Directory".</p>
+        <div class="highlight"><strong>v2 format change (additive only):</strong> every row and column from earlier versions keeps its name and order. New header rows were added after <code>Image2_File</code>, which pushes the trial table down 11 rows. Analysis scripts should find the table by its header line (<code>Trial_Number_Overall,...</code>) rather than by row number. New trial columns were added to the right of the original ten.</div>
 
         <div class="data-section">
             <h3>A. Detailed Trial-by-Trial Data</h3>
@@ -308,6 +328,11 @@
                         <li><code>Timestamp_Start_Run</code>: The date and time the run was initiated.</li>
                         <li><code>Master_CSV_Used</code>: The filename of the master trial list.</li>
                         <li><code>Image1_File</code> / <code>Image2_File</code>: The filenames of the stimulus images.</li>
+                        <li><code>Master_CSV_Path</code> / <code>Master_CSV_SHA256</code>: Full path and SHA-256 hash of the trial file actually used.</li>
+                        <li><code>Trials_Expected</code>: Number of trials in that file.</li>
+                        <li><code>Display_Size</code>, <code>Display_Refresh_Hz_OS</code>, <code>Display_Check</code>: The stimulus window size, the refresh rate the operating system reports, and the resolution check (<code>OK 1600x1200</code>, or <code>MISMATCH …</code> with whether the operator chose to continue).</li>
+                        <li><code>Display_Index</code>, <code>Display_Refresh_Hz_Measured</code>, <code>Vsync</code>: Which display was used (0 = first), the refresh rate measured by timing flips at start-up, and whether flips were synced to the display refresh.</li>
+                        <li><code>Image1_SHA256</code> / <code>Image2_SHA256</code>: Hashes of the stimulus images.</li>
                     </ul>
                 </li>
                 <li><strong>Data Columns:</strong>
@@ -322,9 +347,24 @@
                         <li><code>Discomfort_Rating_0_100</code>: The participant's unpleasantness rating (integer from 0-100).</li>
                         <li><code>Brightness_Rating_0_100</code>: The participant's brightness rating (integer from 0-100).</li>
                         <li><code>Response_Timestamp</code>: The exact time the final rating for the trial was confirmed.</li>
+                        <li><code>Stim_Onset_s</code> / <code>Stim_Offset_s</code>: Stimulus onset (first frame) and offset (end of the stimulus loop), in seconds since the participant's start keypress.</li>
+                        <li><code>Actual_Stimulus_Duration_s</code>: Offset minus onset.</li>
+                        <li><code>N_Flips</code>: Number of frames that changed the image, including the first.</li>
+                        <li><code>Median_Interval_ms</code>, <code>Min_Interval_ms</code>, <code>Max_Interval_ms</code>: Time between successive flicker transitions (nominal: 66.7 ms at 7.5 Hz).</li>
+                        <li><code>N_Intervals_Over_1p5x</code> / <code>N_Intervals_Under_0p5x</code>: Intervals longer than 1.5× the nominal half-period (visible stalls) or shorter than 0.5× (flips too brief to see).</li>
+                        <li><code>Focus_Lost_Events</code>: Times the stimulus window lost focus or was minimized during the trial (fixation, stimulus and ratings).</li>
+                    </ul>
+                </li>
+                <li><strong>Footer:</strong>
+                    <ul>
+                        <li><code>Run_Status</code>: <code>completed</code>, <code>aborted</code> (ESC or window closed) or <code>error</code> (for example, a failed write when a USB drive drops, which now stops the run). A file with no <code>Run_Status</code> row means the process died mid-run.</li>
+                        <li><code>Trials_Completed</code>: Number of trial rows written.</li>
+                        <li><code>Timestamp_End_Run</code>: Always the last row.</li>
                     </ul>
                 </li>
             </ul>
+            <div class="highlight"><strong>Timing caveats.</strong> Onset/offset and flip intervals are software timestamps taken right after each screen flip, not the moment light leaves the screen. Each rig needs a one-time <strong>photodiode check</strong> for absolute onset latency. Image changes follow a fixed time grid aligned to display frames, so a system stall appears as one long interval (counted in <code>N_Intervals_Over_1p5x</code>) and never as a burst of catch-up flips. The first image is shown at onset, so <code>Actual_Stimulus_Duration_s</code> should be very close to the requested duration. No image is ever left on screen for less than half a half-period: after a stall the loop skips ahead rather than flashing an image briefly. One limit of software timestamps: if a stall happens just after a screen update but before the time is read, that timestamp is late, so the log shows a long interval followed by a short one even though the screen was fine. Read an over-1.5× interval immediately followed by an under-0.5× interval as a single stall.</div>
+            <div class="highlight"><strong>Brightness factor.</strong> <code>Brightness_Factor</code> multiplies pixel values, not luminance. On a typical display (gamma about 2.2), a factor of 0.1 gives roughly 0.6% of full luminance, 0.6 about 33%, and 0.8 about 61%. Each site should measure its display's luminance at each level with a <strong>photometer</strong> rather than assume the factor is proportional to light output.</div>
         </div>
 
         <div class="data-section">
@@ -339,6 +379,19 @@
                 <li><code>Number_Of_Rated_Trials</code>: The total count of trials for which ratings were provided.</li>
                 <li><code>Average_Discomfort</code>: The average of all discomfort ratings.</li>
                 <li><code>Average_Brightness</code>: The average of all brightness ratings.</li>
+                <li><code>Run_Status</code>: Same value as in the data file (added at the end).</li>
+            </ul>
+        </div>
+        <div class="data-section">
+            <h3>C. Tonic fMRI Log</h3>
+            <p><strong>Filename:</strong> <span class="filename">tonic_P[ParticipantID]_[Timestamp].csv</span></p>
+            <p>Run parameters, then an event table with wall-clock times and seconds relative to the scanner trigger. It is first written when the trigger arrives (<code>Run_Status = running</code>) and rewritten at the end.</p>
+            <ul>
+                <li><strong>Header:</strong> as before, plus <code>Display_Size</code>, <code>Display_Refresh_Hz_OS</code>, <code>Display_Check</code>, <code>Display_Index</code>, <code>Display_Refresh_Hz_Measured</code>, <code>Vsync</code> and the image hashes (added after <code>Run_Status</code>).</li>
+                <li><code>Stimulus_Onset</code>: The <strong>measured first frame</strong> (in v1 this repeated the trigger time). <code>Actual_Stimulus_Duration_s</code> is measured from this onset.</li>
+                <li><code>Pre_Stimulus_Gap_s</code>: Time from the trigger to the first frame.</li>
+                <li>Flip statistics, as in the standard run: <code>N_Flips</code>, the interval median/min/max and the over/under counts, plus <code>Focus_Lost_Events</code>.</li>
+                <li><code>N_Trigger_Pulses_During_Run</code>, then one <code>Scanner_Pulse</code> row per pulse received during the stimulus, so the starting volume can be worked out afterwards.</li>
             </ul>
         </div>
 
